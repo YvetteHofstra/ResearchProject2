@@ -85,7 +85,7 @@ plot(pca.vs$x[,1], pca.vs$x[,2],
      main = "volatiles in salt treated Medicago")
 
 
-# Screen plot
+# Scree plot
 fviz_eig(pca.vs)
 
 plot(pca.vs$x[,1], pca.vs$x[,3],
@@ -111,8 +111,6 @@ ggdensity(Vs$len,
 
 write.csv(Vs, )
 
-Vs %>% view()
-
 VS <- Vs
 VS$Sample <-  rownames(Vs)
 VS <- VS %>% relocate(Sample) %>% as_tibble()
@@ -131,9 +129,6 @@ colnames(VS)
 
 VS <- VS %>% relocate(Sample, Species, Genotype, Treatment, 
                       Variety, Genotype_Treatment)
-
-VS %>% view()
-
 
 metadataMA <- VS %>% select(Sample, Species, Genotype, Treatment, 
                             Variety, Genotype_Treatment) %>% 
