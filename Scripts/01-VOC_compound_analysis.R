@@ -15,7 +15,7 @@ rm(list = ls())
 # When a package is used for the first time, also add to lockfile
 # renv::snapshot() # This shows a new library downloaded in manuscript
 # Load the packages that are needed for this project
-library(tidyverse) # This loads the tidyverse, it includes ggplot2, dplyr, etc. but can also add them separately 
+library(tidyverse) # Includes ggplot2, dplyr, etc. can also add them separately 
 # load the required packages
 library(tidyverse)
 library(ggplot2)
@@ -30,24 +30,22 @@ readr::read_csv # This makes a tibble instead of table, for every variable it st
 volatiles <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3RbmLQrb8FdeBQgmGatpg5KtOOr4TqRqxVhJZwY8k312ufvbwdcagTyuHrxvOprSR95EtlhW4Oh5B/pub?gid=0&single=true&output=csv") 
 
 # Replace all NAs in the entire data frame with 0
-#Volatiles <- Volatiles |>
-#  mutate_all(~ ifelse(is.na(.), 0, .))
+Volatiles <- volatiles |>
+  mutate_all(~ ifelse(is.na(.), 0, .))
 
-library(corrr)
-library(purrr)
-library(factoextra)
 library(chemodiv)
+library(corrr)
+library(factoextra)
+library(ggpubr)
+library(purrr)
 library(tibble)
 
 # Rename the data sheet to something easier to work with, and make it a data frame
-Vs <- volatiles
+Vs <- Volatiles
 Vs <- as.data.frame(Vs)
-class(Vs)
 rownames(Vs) <- Vs$"...1"
 new_names <- Vs$Sample
 Vs <- Vs[,-c(1)] #cols
-is.na(Vs)
-Vs[is.na(Vs)] <- 0
 X <- as.matrix(Vs)
 
 # Trying z-scores to scale the data before PCA, as the compounds have different ranges. This is important for PCA as it is sensitive to the scale of the data. Z-scores will standardize the data to make comparison between the compounds in the PCA possible
@@ -82,7 +80,7 @@ plot(pca.vs$x[,1], pca.vs$x[,2],
      cex = 0.9,
      xlab = paste0("PC1 (", round(summary(pca.vs)$importance[2,1]*100,1), "%)"),
      ylab = paste0("PC2 (", round(summary(pca.vs)$importance[2,2]*100,1), "%)"),
-     main = "volatiles in salt treated Medicago")
+     main = "Volatiles in salt treated alfalfa")
 
 
 # Scree plot
@@ -94,7 +92,7 @@ plot(pca.vs$x[,1], pca.vs$x[,3],
      cex = 0.9,
      xlab = paste0("PC1 (", round(summary(pca.vs)$importance[2,1]*100,1), "%)"),
      ylab = paste0("PC3 (", round(summary(pca.vs)$importance[2,3]*100,1), "%)"),
-     main = "volatiles in salt treated Medicago")
+     main = "Volatiles in salt treated alfalfa")
 
 plot(pca.vs$x[,1], pca.vs$x[,4],
      col = genotype,           # color by genotype
@@ -102,53 +100,11 @@ plot(pca.vs$x[,1], pca.vs$x[,4],
      cex = 0.9,
      xlab = paste0("PC1 (", round(summary(pca.vs)$importance[2,1]*100,1), "%)"),
      ylab = paste0("PC4 (", round(summary(pca.vs)$importance[2,4]*100,1), "%)"),
-     main = "volatiles in salt treated Medicago")
+     main = "Volatiles in salt treated alfalfa")
 
-library("ggpubr")
-ggdensity(Vs$len, 
-          main = "Density plot of tooth length",
-          xlab = "Tooth length")
 
-write.csv(Vs, )
 
-VS <- Vs
-VS$Sample <-  rownames(Vs)
-VS <- VS %>% relocate(Sample) %>% as_tibble()
-write_csv(VS, file = "Medicago_VOC_MA_compounds.csv")
 
-VS <- VS %>% separate_wider_delim(cols = Sample, delim = "_", 
-                                  names = c("Species", "Genotype_Treatment"), 
-                                  cols_remove = F)
-VS$Variety <- str_sub(string = VS$Genotype_Treatment, start = 1, 1)
-
-VS$Treatment <- str_sub(string = VS$Genotype_Treatment, start = 4, 4)
-
-VS$Genotype <- str_sub(string = VS$Genotype_Treatment, start = 1, 3)
-
-colnames(VS)
-
-VS <- VS %>% relocate(Sample, Species, Genotype, Treatment, 
-                      Variety, Genotype_Treatment)
-
-metadataMA <- VS %>% select(Sample, Species, Genotype, Treatment, 
-                            Variety, Genotype_Treatment) %>% 
-  mutate(Treatment = recode(Treatment,
-                            "s" = "300 mM NaCl",
-                            "u" = "Control"))
-metadataMA$Variety_Treatment <- paste(metadataMA$Variety, 
-                                      metadataMA$Treatment, 
-                                      sep = "_") 
-
-write_csv(metadataMA, file = "Medicago_VOC_MA_metadata.csv")
-
-VS$Variety_Treatment <- paste(VS$Variety, 
-                              VS$Treatment, 
-                              sep = "_") 
-
-VS_MA_onefactor <- VS %>% select(!c(Genotype, Treatment, Species, Variety, Genotype_Treatment)) %>% 
-  relocate(Sample, Variety_Treatment)
-
-write_csv(VS_MA_onefactor, file = "Medicago_VOC_MAonefactor_compounds.csv")
 
 
 
