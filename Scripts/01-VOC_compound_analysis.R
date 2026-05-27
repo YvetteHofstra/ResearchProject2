@@ -90,7 +90,14 @@ plot(pca.vs$x[,1], pca.vs$x[,2],
      main = "Volatiles in salt treated Medicago")
 legend("topright", legend = levels(genotype), col = 1:length(levels(genotype)), pch = 18)
 
-
+plot(pca.vs$x[,1], pca.vs$x[,2],
+     col = treatment,           # color by treatment
+     pch = pch_items,      
+     cex = 0.9,
+     xlab = paste0("PC1 (", round(summary(pca.vs)$importance[2,1]*100,1), "%)"),
+     ylab = paste0("PC2 (", round(summary(pca.vs)$importance[2,2]*100,1), "%)"),
+     main = "Volatiles in salt treated Medicago")
+legend("topright", legend = levels(treatment), col = 1:length(levels(treatment)), pch = 18)
 
 
 
