@@ -48,17 +48,26 @@ Vs <- Vs[,-c(1)] #cols
 X <- as.matrix(Vs)
 
 # Trying z-scores to scale the data before PCA, as the compounds have different ranges. This is important for PCA as it is sensitive to the scale of the data. Z-scores will standardize the data to make comparison between the compounds in the PCA possible
+pca.vs <- prcomp(X,
+                 center = TRUE,
+                 scale. = TRUE)
+
+# Variance explained
+var_explained <- summary(pca.vs)$importance[2, ] * 100
+
 X_z <- scale(X)
 colMeans(X_z)    # should be ~0
 apply(X_z, 2, sd)  # should be 1
 
+# Make the data ready for a PCA
 pca.vs <- prcomp(X_z, scale. = F, center = T)
 
-# Create treatment/genotype factor so I can colour/shape the PCA by factors
+# Create treatment/genotype factor so you can colour/shape the PCA by factors
 treatment <- factor(c("s","u","u","s","s","s","u","u","u","u",
                       "s","s","s","s","s","u","u","s","u","u",
                       "s","s","u","u","s","u","u","u","s","s",
                       "u","u","s","s","s","u"))
+
 
 genotype <- factor(c("A","A","A","A","A","A",
                      "A","A","A","A","A","A",
@@ -70,8 +79,7 @@ genotype <- factor(c("A","A","A","A","A","A",
 treatment_levels <- levels(treatment)
 pch_map <- setNames(c(18, 20), treatment_levels)  # triangle, square, circle
 pch_items <- pch_map[as.character(treatment_levels)]
-# To add the shapes for the PCA using the genus after creating the genus factor 
-# Create a small shapes item
+# To add the shapes for the PCA using the genotype after creating the genotype factor 
 
 plot(pca.vs$x[,1], pca.vs$x[,2],
      col = genotype,           # color by genotype
@@ -79,29 +87,8 @@ plot(pca.vs$x[,1], pca.vs$x[,2],
      cex = 0.9,
      xlab = paste0("PC1 (", round(summary(pca.vs)$importance[2,1]*100,1), "%)"),
      ylab = paste0("PC2 (", round(summary(pca.vs)$importance[2,2]*100,1), "%)"),
-     main = "Volatiles in salt treated alfalfa")
-
-
-# Scree plot
-fviz_eig(pca.vs)
-
-plot(pca.vs$x[,1], pca.vs$x[,3],
-     col = genotype,           # color by genotype
-     pch = pch_items,      
-     cex = 0.9,
-     xlab = paste0("PC1 (", round(summary(pca.vs)$importance[2,1]*100,1), "%)"),
-     ylab = paste0("PC3 (", round(summary(pca.vs)$importance[2,3]*100,1), "%)"),
-     main = "Volatiles in salt treated alfalfa")
-
-plot(pca.vs$x[,1], pca.vs$x[,4],
-     col = genotype,           # color by genotype
-     pch = pch_items,      
-     cex = 0.9,
-     xlab = paste0("PC1 (", round(summary(pca.vs)$importance[2,1]*100,1), "%)"),
-     ylab = paste0("PC4 (", round(summary(pca.vs)$importance[2,4]*100,1), "%)"),
-     main = "Volatiles in salt treated alfalfa")
-
-
+     main = "Volatiles in salt treated Medicago")
+legend("topright", legend = levels(genotype), col = 1:length(levels(genotype)), pch = 16)
 
 
 
