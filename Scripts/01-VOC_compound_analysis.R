@@ -20,19 +20,6 @@ library(tidyverse) # Includes ggplot2, dplyr, etc. can also add them separately
 library(tidyverse)
 library(ggplot2)
 library(dplyr)
-
-readr::read_csv # This makes a tibble instead of table, for every variable it stores what the type of variable is. It doesn't just stop at the length it can print, which is what table does.
-
-# ---- Exploratory Analysis ----
-
-# Load the data you want to use
-# Load the data file from google drive 
-volatiles <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3RbmLQrb8FdeBQgmGatpg5KtOOr4TqRqxVhJZwY8k312ufvbwdcagTyuHrxvOprSR95EtlhW4Oh5B/pub?gid=0&single=true&output=csv") 
-
-# Replace all NAs in the entire data frame with 0
-Volatiles <- volatiles |>
-  mutate_all(~ ifelse(is.na(.), 0, .))
-
 library(chemodiv)
 library(corrr)
 library(factoextra)
@@ -40,8 +27,20 @@ library(ggpubr)
 library(purrr)
 library(tibble)
 
+readr::read_csv # This makes a tibble instead of table, for every variable it stores what the type of variable is. It doesn't just stop at the length it can print, which is what table does.
+
+# ---- Exploratory Analysis ----
+
+# Load the data you want to use
+# Load the data file from google drive 
+volatiles <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3RbmLQrb8FdeBQgmGatpg5KtOOr4TqRqxVhJZwY8k312ufvbwdcagTyuHrxvOprSR95EtlhW4Oh5B/pub?gid=999358973&single=true&output=csv") 
+
+# Replace all NAs in the entire data frame with 0
+# Volatiles <- volatiles |>
+#  mutate_all(~ ifelse(is.na(.), 0, .))
+
 # Rename the data sheet to something easier to work with, and make it a data frame
-Vs <- Volatiles
+Vs <- volatiles
 Vs <- as.data.frame(Vs)
 rownames(Vs) <- Vs$"...1"
 new_names <- Vs$Sample
