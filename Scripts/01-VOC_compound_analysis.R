@@ -77,7 +77,7 @@ genotype <- factor(c("A","A","A","A","A","A",
                      "V","V","V","V","V","V"))
 
 treatment_levels <- levels(treatment)
-pch_map <- setNames(c(18, 20), treatment_levels)  # triangle, square, circle
+pch_map <- setNames(c(16, 17), treatment_levels)  # triangle, square, circle
 pch_items <- pch_map[as.character(treatment_levels)]
 # To add the shapes for the PCA using the genotype after creating the genotype factor 
 
@@ -90,6 +90,8 @@ plot(pca.vs$x[,1], pca.vs$x[,2],
      main = "Volatiles in salt treated Medicago")
 legend("topright", legend = levels(genotype), col = 1:length(levels(genotype)), pch = 18)
 
+
+# Same pca but now colored by treatment
 plot(pca.vs$x[,1], pca.vs$x[,2],
      col = treatment,           # color by treatment
      pch = pch_items,      
@@ -98,10 +100,3 @@ plot(pca.vs$x[,1], pca.vs$x[,2],
      ylab = paste0("PC2 (", round(summary(pca.vs)$importance[2,2]*100,1), "%)"),
      main = "Volatiles in salt treated Medicago")
 legend("topright", legend = levels(treatment), col = 1:length(levels(treatment)), pch = 18)
-
-
-
-
-
-
-
