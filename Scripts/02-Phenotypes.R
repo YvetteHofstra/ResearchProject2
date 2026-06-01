@@ -74,6 +74,76 @@ ggplot(Phenotype, aes(x = Treatment_worded, y = Number_inflorescences)) +
 # Save
 # ggsave("Treatment_with_inflorescence.png", width = 8, height = 6, dpi = 300)
 
+# Inflorescence per treatment and colored by cultivar
+ggplot(Phenotype, aes(x = Treatment_worded, y = Number_inflorescences, color = Cultivar)) +
+  geom_point() +
+  labs(title = "Number of inflorescences per treatment of Medicago sativa",
+       x = "Treatment",
+       y = "Inflorescence (#)") +
+  theme_minimal()
+# Save
+# ggsave("Treatment_with_inflorescences_and_cultivar.png", width = 8, height = 6, dpi = 300)
+
+# Flowers per treatment and colored by cultivar
+ggplot(Phenotype, aes(x = Treatment_worded, y = Number_flowers, color = Cultivar)) +
+  geom_point() +
+  labs(title = "Number of flowers per treatment of Medicago sativa",
+       x = "Treatment",
+       y = "Flower (#)") +
+  theme_minimal()
+# Save
+# ggsave("Treatment_with_flowers_and_cultivar.png", width = 8, height = 6, dpi = 300)
+
+# Try to add the flower color in a plot. E.g. first the flower color per variety
+ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
+  geom_bar() +
+  labs(title = "Flower color per cultivar of Medicago sativa",
+       x = "Cultivar",
+       y = "Count") +
+  theme_minimal()
+# Save
+# ggsave("Flower_color_per_cultivar.png", width = 8, height = 6, dpi = 300)
+
+# Now make the colors correspond to the bars
+ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
+  geom_bar() +
+  scale_fill_manual(values = c(
+    "Yellow" = "yellow",
+    "Purple" = "#9d07c5ff"
+  )) +
+  labs(title = "Flower color per cultivar of Medicago sativa",
+       x = "Cultivar",
+       y = "Count",
+       fill = "Flower color") +
+  theme_minimal()
+# Save
+# ggsave("Flower_color_per_cultivar_with_actual_colors.png", width = 8, height = 6, dpi = 300)
+
+# Now the treatment split to show the amount of plants per cultivar and per treatment which color the plant has
+ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
+  geom_bar() +
+  facet_wrap(~ Treatment) +
+  scale_fill_manual(values = c(
+    "Yellow" = "yellow",
+    "Purple" = "#9d07c5ff"
+  )) +
+  theme_minimal()
+
+ggplot(Phenotype, aes(x = Treatment_worded, fill = Flower_color_simple)) +
+  geom_bar() +
+  facet_wrap(~ Cultivar) +
+  scale_fill_manual(values = c(
+    "Yellow" = "yellow",
+    "Purple" = "#9d07c5ff"
+  )) +
+  labs(title = "Flower color per cultivar of Medicago sativa",
+       x = "Treatment",
+       y = "Plants (#)",
+       fill = "Flower color") +
+  theme_minimal()
+# Save
+# ggsave("Flower_color_per_treatment_and_cultivar.png", width = 8, height = 6, dpi = 300)
+
 
 
 
