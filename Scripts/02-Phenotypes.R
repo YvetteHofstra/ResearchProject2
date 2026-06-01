@@ -42,7 +42,7 @@ ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences)) +
        y = "Inflorescence (#)") +
   theme_minimal()
 # Save
-# ggsave("Inflorescences.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Inflorescences.png", width = 8, height = 6, dpi = 300)
 
 # Make the same but now with the amount of flowers
 ggplot(Phenotype, aes(x = Cultivar, y = Number_flowers)) +
@@ -52,7 +52,7 @@ ggplot(Phenotype, aes(x = Cultivar, y = Number_flowers)) +
        y = "Flowers (#)") +
   theme_minimal()
 # Save
-# ggsave("Flowers.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Flowers.png", width = 8, height = 6, dpi = 300)
 
 # Treatment with the amount of flowers
 ggplot(Phenotype, aes(x = Treatment_worded, y = Number_flowers)) +
@@ -62,7 +62,7 @@ ggplot(Phenotype, aes(x = Treatment_worded, y = Number_flowers)) +
        y = "Flowers (#)") +
   theme_minimal()
 # Save
-# ggsave("Treatment_with_flowers.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Treatment_with_flowers.png", width = 8, height = 6, dpi = 300)
 
 # Treatment with the amount of inflorescences
 ggplot(Phenotype, aes(x = Treatment_worded, y = Number_inflorescences)) +
@@ -72,7 +72,7 @@ ggplot(Phenotype, aes(x = Treatment_worded, y = Number_inflorescences)) +
        y = "Inflorescence (#)") +
   theme_minimal()
 # Save
-# ggsave("Treatment_with_inflorescence.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Treatment_with_inflorescence.png", width = 8, height = 6, dpi = 300)
 
 # Inflorescence per treatment and colored by cultivar
 ggplot(Phenotype, aes(x = Treatment_worded, y = Number_inflorescences, color = Cultivar)) +
@@ -82,7 +82,7 @@ ggplot(Phenotype, aes(x = Treatment_worded, y = Number_inflorescences, color = C
        y = "Inflorescence (#)") +
   theme_minimal()
 # Save
-# ggsave("Treatment_with_inflorescences_and_cultivar.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Treatment_with_inflorescences_and_cultivar.png", width = 8, height = 6, dpi = 300)
 
 # Flowers per treatment and colored by cultivar
 ggplot(Phenotype, aes(x = Treatment_worded, y = Number_flowers, color = Cultivar)) +
@@ -92,7 +92,7 @@ ggplot(Phenotype, aes(x = Treatment_worded, y = Number_flowers, color = Cultivar
        y = "Flower (#)") +
   theme_minimal()
 # Save
-# ggsave("Treatment_with_flowers_and_cultivar.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Treatment_with_flowers_and_cultivar.png", width = 8, height = 6, dpi = 300)
 
 # Try to add the flower color in a plot. E.g. first the flower color per variety
 ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
@@ -102,7 +102,7 @@ ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
        y = "Count") +
   theme_minimal()
 # Save
-# ggsave("Flower_color_per_cultivar.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Flower_color_per_cultivar.png", width = 8, height = 6, dpi = 300)
 
 # Now make the colors correspond to the bars
 ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
@@ -117,7 +117,7 @@ ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
        fill = "Flower color") +
   theme_minimal()
 # Save
-# ggsave("Flower_color_per_cultivar_with_actual_colors.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Flower_color_per_cultivar_with_actual_colors.png", width = 8, height = 6, dpi = 300)
 
 # Now the treatment split to show the amount of plants per cultivar and per treatment which color the plant has
 ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
@@ -142,7 +142,7 @@ ggplot(Phenotype, aes(x = Treatment_worded, fill = Flower_color_simple)) +
        fill = "Flower color") +
   theme_minimal()
 # Save
-# ggsave("Flower_color_per_treatment_and_cultivar.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Flower_color_per_treatment_and_cultivar.png", width = 8, height = 6, dpi = 300)
 
 
 

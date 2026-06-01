@@ -27,6 +27,40 @@ readr::read_csv # This makes a tibble instead of table, for every variable it st
 # Load the data file from google drive 
 Nectar <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=217767211&single=true&output=csv") 
 
+# Show the type of data R will treat it as (numeric, character, factor, etc.)
+str(Nectar)
+
+# Make an exploratory graph
+ggplot(Nectar, aes(x = Cultivar, y = Filled_until_mm)) +
+  geom_point() +
+  labs(title = "Nectar per cultivar of Medicago sativa",
+       x = "Cultivar",
+       y = "Nectar (mm)") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Nectar_length.png", width = 8, height = 6, dpi = 300)
+
+# Make it into a boxplot
+ggplot(Nectar, aes(x = Cultivar, y = Filled_until_mm, fill = Cultivar)) +
+  geom_boxplot() +
+  labs(title = "Number of inflorescences per cultivar of Medicago sativa",
+       x = "Cultivar",
+       y = "Nectar (mm)") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Nectar_length_boxplot.png", width = 8, height = 6, dpi = 300)
+
+# Now add the treatment
+ggplot(Nectar, aes(x = Treatment_worded, y = Filled_until_mm, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(title = "Nectar per treatment of Medicago sativa",
+       x = "Treatment",
+       y = "Nectar (mm)") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Nectar_length_treatment_boxplot.png", width = 8, height = 6, dpi = 300)
+
+
 
 
 
