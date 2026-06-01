@@ -78,7 +78,7 @@ genotype <- factor(c("A","A","A","A","A","A",
 
 treatment_levels <- levels(treatment)
 pch_map <- setNames(c(16, 17), treatment_levels)  # triangle, square, circle
-pch_items <- pch_map[as.character(treatment_levels)]
+pch_items <- pch_map[as.character(treatment)]
 # To add the shapes for the PCA using the genotype after creating the genotype factor 
 
 plot(pca.vs$x[,1], pca.vs$x[,2],
