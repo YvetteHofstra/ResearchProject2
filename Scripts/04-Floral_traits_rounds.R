@@ -27,13 +27,84 @@ readr::read_csv # This makes a tibble instead of table, for every variable it st
 # Load the data file from google drive 
 Flowers <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN4V7eOLdZ4JMNue1B_q67kQHkpzGDWt3DCY8FyHVBW5Ml_TR2rViu7jViE_WXihuuZiRc/pub?gid=0&single=true&output=csv") 
 
+# Show the type of data R will treat it as (numeric, character, factor, etc.)
+str(Flowers)
 
+# Make Number_inflorescences numeric instead of integer
+Flowers$Number_Inflorescences <- as.numeric(Flowers$Number_Inflorescences)
 
+# Make an exploratory graph
+ggplot(Flowers, aes(x = Cultivar, y = Number_Inflorescences)) +
+  geom_point() +
+  labs(title = "Number of inflorescences per cultivar of Medicago sativa",
+       x = "Cultivar",
+       y = "Inflorescence (#)") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Inflorescences_rounds.png", width = 8, height = 6, dpi = 300)
 
+# Treatment with the amount of inflorescences
+ggplot(Flowers, aes(x = Treatment_worded, y = Number_Inflorescences)) +
+  geom_point() +
+  labs(title = "Number of inflorescences per treatment of Medicago sativa",
+       x = "Treatment",
+       y = "Inflorescence (#)") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Treatment_with_inflorescence_rounds.png", width = 8, height = 6, dpi = 300)
 
+# Inflorescence per treatment and colored by cultivar
+ggplot(Flowers, aes(x = Treatment_worded, y = Number_Inflorescences, color = Cultivar)) +
+  geom_point() +
+  labs(title = "Number of inflorescences per treatment of Medicago sativa",
+       x = "Treatment",
+       y = "Inflorescence (#)") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Treatment_with_inflorescences_and_cultivar_rounds.png", width = 8, height = 6, dpi = 300)
 
+# Now add the average inflorescence length per plant (so 36 still)
+ggplot(Flowers, aes(x = Treatment_worded, y = Average_Inflorescence_Length, color = Cultivar)) +
+  geom_point() +
+  labs(title = "Length of inflorescences per treatment of Medicago sativa",
+       x = "Treatment",
+       y = "Inflorescence length (mm)") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Treatment_with_inflorescence_length_and_cultivar_rounds.png", width = 8, height = 6, dpi = 300)
 
+# Now make a boxplot with this information, first try without treatment separation
+ggplot(Flowers, aes(x = Cultivar, y = Average_Inflorescence_Length, fill = Cultivar)) +
+  geom_boxplot() +
+  labs(title = "Inflorescence length per cultivar of Medicago sativa",
+       x = "Cultivar",
+       y = "Inflorescence length (mm)") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Inflorescence_length_boxplot_rounds.png", width = 8, height = 6, dpi = 300)
 
+# Now add the treatment
+ggplot(Flowers, aes(x = Treatment_worded, y = Average_Inflorescence_Length, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(title = "Inflorescence length per treatment of Medicago sativa",
+       x = "Treatment",
+       y = "Inflorescence length (mm)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Inflorescence_length_treatment_boxplot_rounds.png", width = 8, height = 6, dpi = 300)
+
+# Now divide the treatment to also show cultivars
+ggplot(Flowers, aes(x = Treatment_worded, y = Average_Inflorescence_Length, fill = Treatment_worded)) +
+  geom_boxplot() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Inflorescence length of Medicago sativa",
+       x = "Treatment",
+       y = "Inflorescence length (mm)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Inflorescence_length_treatment_boxplot_cultivar_rounds.png", width = 8, height = 6, dpi = 300)
 
 
 
