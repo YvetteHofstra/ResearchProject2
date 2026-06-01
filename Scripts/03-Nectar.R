@@ -55,13 +55,23 @@ ggplot(Nectar, aes(x = Treatment_worded, y = Filled_until_mm, fill = Treatment_w
   geom_boxplot() +
   labs(title = "Nectar per treatment of Medicago sativa",
        x = "Treatment",
-       y = "Nectar (mm)") +
+       y = "Nectar (mm)",
+       fill = "Treatment") +
   theme_minimal()
 # Save
 # ggsave("Graphs/Nectar_length_treatment_boxplot.png", width = 8, height = 6, dpi = 300)
 
-
-
+# Now divide the treatment to also show cultivars
+ggplot(Nectar, aes(x = Treatment_worded, y = Filled_until_mm, fill = Treatment_worded)) +
+  geom_boxplot() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Nectar per treatment of Medicago sativa",
+       x = "Treatment",
+       y = "Nectar (mm)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Nectar_length_treatment_boxplot_cultivar.png", width = 8, height = 6, dpi = 300)
 
 
 
