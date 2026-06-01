@@ -27,7 +27,22 @@ readr::read_csv # This makes a tibble instead of table, for every variable it st
 # Load the data file from google drive 
 Phenotype <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=206224982&single=true&output=csv") 
 
+# Show the type of data R will treat it as (numeric, character, factor, etc.)
+str(Phenotype)
 
+# Make Number_inflorescences and Number_flowers numeric instead of integer
+Phenotype$Number_inflorescences <- as.numeric(Phenotype$Number_inflorescences)
+Phenotype$Number_flowers <- as.numeric(Phenotype$Number_flowers)
+
+# Make an exploratory graph
+ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences)) +
+  geom_point() +
+  labs(title = "Number of inflorescences per cultivar of Medicago sativa",
+       x = "Cultivar",
+       y = "Inflorescence (#)") +
+  theme_minimal()
+# Save
+# ggsave("Inflorescences.png", width = 8, height = 6, dpi = 300)
 
 
 
