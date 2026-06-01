@@ -44,7 +44,35 @@ ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences)) +
 # Save
 # ggsave("Inflorescences.png", width = 8, height = 6, dpi = 300)
 
+# Make the same but now with the amount of flowers
+ggplot(Phenotype, aes(x = Cultivar, y = Number_flowers)) +
+  geom_point() +
+  labs(title = "Number of flowers per cultivar of Medicago sativa",
+       x = "Cultivar",
+       y = "Flowers (#)") +
+  theme_minimal()
+# Save
+# ggsave("Flowers.png", width = 8, height = 6, dpi = 300)
 
+# Treatment with the amount of flowers
+ggplot(Phenotype, aes(x = Treatment_worded, y = Number_flowers)) +
+  geom_point() +
+  labs(title = "Number of flowers per treatment of Medicago sativa",
+       x = "Cultivar",
+       y = "Flowers (#)") +
+  theme_minimal()
+# Save
+# ggsave("Treatment_with_flowers.png", width = 8, height = 6, dpi = 300)
+
+# Treatment with the amount of inflorescences
+ggplot(Phenotype, aes(x = Treatment_worded, y = Number_inflorescences)) +
+  geom_point() +
+  labs(title = "Number of inflorescences per treatment of Medicago sativa",
+       x = "Cultivar",
+       y = "Inflorescence (#)") +
+  theme_minimal()
+# Save
+# ggsave("Treatment_with_inflorescence.png", width = 8, height = 6, dpi = 300)
 
 
 
