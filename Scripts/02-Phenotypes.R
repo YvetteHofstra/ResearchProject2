@@ -58,7 +58,7 @@ ggplot(Phenotype, aes(x = Cultivar, y = Number_flowers)) +
 ggplot(Phenotype, aes(x = Treatment_worded, y = Number_flowers)) +
   geom_point() +
   labs(title = "Number of flowers per treatment of Medicago sativa",
-       x = "Cultivar",
+       x = "Treatment",
        y = "Flowers (#)") +
   theme_minimal()
 # Save
@@ -68,7 +68,7 @@ ggplot(Phenotype, aes(x = Treatment_worded, y = Number_flowers)) +
 ggplot(Phenotype, aes(x = Treatment_worded, y = Number_inflorescences)) +
   geom_point() +
   labs(title = "Number of inflorescences per treatment of Medicago sativa",
-       x = "Cultivar",
+       x = "Treatment",
        y = "Inflorescence (#)") +
   theme_minimal()
 # Save
