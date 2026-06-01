@@ -88,7 +88,9 @@ plot(pca.vs$x[,1], pca.vs$x[,2],
      xlab = paste0("PC1 (", round(summary(pca.vs)$importance[2,1]*100,1), "%)"),
      ylab = paste0("PC2 (", round(summary(pca.vs)$importance[2,2]*100,1), "%)"),
      main = "Volatiles in salt treated Medicago")
-legend("topright", legend = levels(genotype), col = 1:length(levels(genotype)), pch = 18)
+# legend("topright", legend = levels(genotype), col = 1:length(levels(genotype)), pch = 18)
+# Save
+# ggsave("Graphs/pca_volatiles_varieties.png",width = 11,height = 8,dpi = 600,units = "in")
 
 
 # Same pca but now colored by treatment
@@ -99,4 +101,20 @@ plot(pca.vs$x[,1], pca.vs$x[,2],
      xlab = paste0("PC1 (", round(summary(pca.vs)$importance[2,1]*100,1), "%)"),
      ylab = paste0("PC2 (", round(summary(pca.vs)$importance[2,2]*100,1), "%)"),
      main = "Volatiles in salt treated Medicago")
-legend("topright", legend = levels(treatment), col = 1:length(levels(treatment)), pch = 18)
+# legend("topright", legend = levels(treatment), col = 1:length(levels(treatment)), pch = 18)
+# Save
+# ggsave("Graphs/pca_volatiles_treatment.png",width = 11,height = 8,dpi = 600,units = "in")
+
+
+# There are a few high areas of the peaks that are a lot higher than the rest.
+# The whole line of the variety has to be removed, the plants are:
+# A77, C61, C73, C78, V81
+# All for the 'formamide', but C73 for the alpha-ocimene
+
+
+
+
+
+
+
+
