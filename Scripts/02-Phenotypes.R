@@ -213,6 +213,58 @@ ggplot(Phenotype, aes(x = Treatment_worded, fill = Flower_color_simple)) +
 # Save
 # ggsave("Graphs/Flower_color_per_treatment_and_cultivar.png", width = 8, height = 6, dpi = 300)
 
+# Now add growth direction of the plants to a plot
+ggplot(Phenotype, aes(x = Treatment_worded, fill = Growth_direction)) +
+  geom_bar() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Growth direction of Medicago sativa",
+       x = "Treatment",
+       y = "Plants (#)",
+       fill = "Growth direction") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Growth_direction_per_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
+
+# Stem colour, change the colors to match the actual colors of the plants
+ggplot(Phenotype, aes(x = Treatment_worded, fill = Stem_color)) +
+  geom_bar() +
+  facet_wrap(~ Cultivar) +
+  scale_fill_manual(values = c(
+    "Green" = "#008300",
+    "Intermediate" = "#DCB695",
+    "Red" = "red"
+  )) +
+  labs(title = "Stem colour of Medicago sativa",
+       x = "Treatment",
+       y = "Plants (#)",
+       fill = "Stem colour") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Stem_colour_per_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
+
+# Nodules
+ggplot(Phenotype, aes(x = Treatment_worded, fill = Nodules)) +
+  geom_bar() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Nodule presence of Medicago sativa",
+       x = "Treatment",
+       y = "Plants (#)",
+       fill = "Nodule presence") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Nodule_presence_per_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
