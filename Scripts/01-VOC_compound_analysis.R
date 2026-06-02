@@ -78,7 +78,7 @@ genotype <- factor(c("A","A","A","A","A","A",
 
 treatment_levels <- levels(treatment)
 pch_map <- setNames(c(16, 17), treatment_levels)  # triangle, square, circle
-pch_items <- pch_map[as.character(treatment)]
+pch_items <- pch_map[as.character(treatment_levels)]
 # To add the shapes for the PCA using the genotype after creating the genotype factor 
 
 plot(pca.vs$x[,1], pca.vs$x[,2],
@@ -108,8 +108,11 @@ plot(pca.vs$x[,1], pca.vs$x[,2],
 
 # There are a few high areas of the peaks that are a lot higher than the rest.
 # The whole line of the variety has to be removed, the plants are:
-# A77, C61, C73, C78, V81
-# All for the 'formamide', but C73 for the alpha-ocimene
+# A77, C61, C73, C78, V81, V81, V68
+# All for the 'formamide', but C73, V81 and V68 for the alpha-ocimene
+
+
+
 
 
 
