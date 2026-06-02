@@ -94,6 +94,55 @@ ggplot(Phenotype, aes(x = Treatment_worded, y = Number_flowers, color = Cultivar
 # Save
 # ggsave("Graphs/Treatment_with_flowers_and_cultivar.png", width = 8, height = 6, dpi = 300)
 
+# Try a more logical approach of cultivar with # flowers and colour by treatment
+ggplot(Phenotype, aes(x = Cultivar, y = Number_flowers, color = Treatment_worded)) +
+  geom_point() +
+  labs(title = "Number of flowers per treatment of Medicago sativa",
+       x = "Cultivar",
+       y = "Flower (#)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Cultivar_with_flowers_divided_by_treatment.png", width = 8, height = 6, dpi = 300)
+
+# Again but with inflorescences
+ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences, color = Treatment_worded)) +
+  geom_point() +
+  labs(title = "Number of inflorescences",
+       x = "Cultivar",
+       y = "Inflorescence (#)") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Cultivar_with_inflorescences_divided_by_treatment.png", width = 8, height = 6, dpi = 300)
+
+# Try a boxplot
+ggplot(Phenotype, aes(x = Cultivar, y = Number_flowers, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(title = "Number of flowers",
+       x = "Cultivar",
+       y = "Flower (#)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Cultivar_with_flowers_divided_by_treatment_boxplot.png", width = 8, height = 6, dpi = 300)
+
+# Again but with inflorescences
+ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(title = "Number of inflorescences",
+       x = "Cultivar",
+       y = "Inflorescence (#)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Cultivar_with_inflorescences_divided_by_treatment_boxplot.png", width = 8, height = 6, dpi = 300)
+
+
+
+
+
+
+
 # Try to add the flower color in a plot. E.g. first the flower color per variety
 ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
   geom_bar() +
