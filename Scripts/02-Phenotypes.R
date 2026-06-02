@@ -18,6 +18,9 @@ library(factoextra)
 library(ggpubr)
 library(purrr)
 library(tibble)
+library(MASS)
+library(multcomp)
+library(emmeans)
 
 readr::read_csv # This makes a tibble instead of table, for every variable it stores what the type of variable is. It doesn't just stop at the length it can print, which is what table does.
 
@@ -126,6 +129,16 @@ ggplot(Phenotype, aes(x = Cultivar, y = Number_flowers, fill = Treatment_worded)
 # Save
 # ggsave("Graphs/Cultivar_with_flowers_divided_by_treatment_boxplot.png", width = 8, height = 6, dpi = 300)
 
+# Check if it makes sense to add significance to the plot 
+model_flowers_nb <- glm.nb(Number_flowers ~ Cultivar * Treatment_worded,
+                           data = Phenotype)
+anova(model_flowers_nb)
+# Only cultivar is significant, so do not add significance to previous plot
+emm <- emmeans(model_flowers_nb, ~ Cultivar)
+pairs(emm)
+cld(emm)
+# Flower number differed significantly among cultivars (negative binomial GLM, p = 0.022), but not between treatment
+
 # Again but with inflorescences
 ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences, fill = Treatment_worded)) +
   geom_boxplot() +
@@ -137,11 +150,14 @@ ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences, fill = Treatment_
 # Save
 # ggsave("Graphs/Cultivar_with_inflorescences_divided_by_treatment_boxplot.png", width = 8, height = 6, dpi = 300)
 
-
-
-
-
-
+model_inflorescence_nb <- glm.nb(Number_inflorescences ~ Cultivar * Treatment_worded,
+                                 data = Phenotype)
+anova(model_inflorescence_nb)
+# Only cultivar is significant, so do not add significance to previous plot
+emm <- emmeans(model_inflorescence_nb, ~ Cultivar)
+pairs(emm)
+cld(emm)
+# Inflorescence number differed significantly among cultivars (negative binomial GLM, p = < 0.05), but not between treatment
 
 # Try to add the flower color in a plot. E.g. first the flower color per variety
 ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
