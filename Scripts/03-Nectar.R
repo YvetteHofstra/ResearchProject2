@@ -73,6 +73,29 @@ ggplot(Nectar, aes(x = Treatment_worded, y = Filled_until_mm, fill = Treatment_w
 # Save
 # ggsave("Graphs/Nectar_length_treatment_boxplot_cultivar.png", width = 8, height = 6, dpi = 300)
 
+ggplot(Nectar, aes(x = Cultivar, y = Filled_until_mm, fill = Treatment_worded)) +
+  geom_boxplot() +
+  facet_wrap(~ Treatment_worded) +
+  labs(title = "Nectar per treatment of Medicago sativa",
+       x = "Cultivar",
+       y = "Nectar (mm)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Nectar_length_cultivar_boxplot_treatment.png", width = 8, height = 6, dpi = 300)
+
+ggplot(Nectar, aes(x = Cultivar, y = Filled_until_mm, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(title = "Nectar per treatment of Medicago sativa",
+       x = "Cultivar",
+       y = "Nectar (mm)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Nectar_length_cultivar_boxplot_treatment_no_facet.png", width = 8, height = 6, dpi = 300)
+
+
+
 
 
 
