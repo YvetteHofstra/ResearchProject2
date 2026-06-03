@@ -242,7 +242,13 @@ ggplot(Phenotype, aes(x = Treatment_worded, fill = Stem_color)) +
 # Save
 # ggsave("Graphs/Stem_colour_per_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
 
-# Nodules
+# Nodules, but change to have the yes (1) and no (0) as labels instead of continuous
+Phenotype$Nodules <- factor(
+  Phenotype$Nodules,
+  levels = c(0, 1),
+  labels = c("No", "Yes")
+)
+
 ggplot(Phenotype, aes(x = Treatment_worded, fill = Nodules)) +
   geom_bar() +
   facet_wrap(~ Cultivar) +
@@ -253,6 +259,7 @@ ggplot(Phenotype, aes(x = Treatment_worded, fill = Nodules)) +
   theme_minimal()
 # Save
 # ggsave("Graphs/Nodule_presence_per_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
+
 
 
 
