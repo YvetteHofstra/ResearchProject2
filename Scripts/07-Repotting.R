@@ -28,20 +28,71 @@ readr::read_csv # This makes a tibble instead of table, for every variable it st
 
 # Load the data you want to use
 # Load the data file from google drive 
-Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=206224982&single=true&output=csv") 
+Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1067776784&single=true&output=csv") 
+
+# Show the type of data R will treat it as (numeric, character, factor, etc.)
+str(Repotting)
+
+# Make the yes and no into factor
+Repotting$Nodules_present <- factor(
+  Repotting$Nodules_present,
+  levels = c(0, 1),
+  labels = c("No", "Yes")
+)
+
+Repotting$Seeds_present <- factor(
+  Repotting$Seeds_present,
+  levels = c(0, 1),
+  labels = c("No", "Yes")
+)
 
 # Make an exploratory graph
-ggplot(Repotting, aes(x = Cultivar, y = Number_Inflorescences)) +
-  geom_point() +
-  labs(title = "Number of inflorescences per cultivar of Medicago sativa",
-       x = "Cultivar",
-       y = "Inflorescence (#)") +
+ggplot(Repotting, aes(x = Treatment_worded, fill = Nodules_present)) +
+  geom_bar() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Nodule presence of Medicago sativa",
+       x = "Treatment",
+       y = "Plants (#)",
+       fill = "Nodule presence") +
   theme_minimal()
 # Save
-# ggsave("Graphs/Inflorescences_rounds.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Nodule_presence_per_cultivar_treatment.png", width = 8, height = 6, dpi = 300)
 
+# Make the same but now with the seeds
+ggplot(Repotting, aes(x = Treatment_worded, fill = Seeds_present)) +
+  geom_bar() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Seed presence of Medicago sativa",
+       x = "Treatment",
+       y = "Plants (#)",
+       fill = "Seed presence") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Seed_presence_per_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
 
+# And make one to show seed abundance
+ggplot(Repotting, aes(x = Treatment_worded, fill = Seed_abundance)) +
+  geom_bar() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Seed abundance of Medicago sativa",
+       x = "Treatment",
+       y = "Plants (#)",
+       fill = "Seed abundance") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Seed_abundance_per_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
 
+# Now make a graph with the root abundance 
+ggplot(Repotting, aes(x = Treatment_worded, fill = Root_abundance)) +
+  geom_bar() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Root abundance of Medicago sativa",
+       x = "Treatment",
+       y = "Plants (#)",
+       fill = "Root abundance") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Root_abundance_per_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
 
 
 
