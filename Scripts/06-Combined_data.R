@@ -18,6 +18,7 @@ library(factoextra)
 library(ggpubr)
 library(purrr)
 library(tibble)
+library(tidyr)
 library(MASS)
 library(multcomp)
 library(emmeans)
@@ -187,13 +188,179 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_flowers, color = Treat
 # Save
 # ggsave("Graphs/Nectar_and_flowers_scatterplot_line_no_SE_treatment.png", width = 8, height = 6, dpi = 300)
 
+# Try to combine inflorescence length and nectar (does length correlate to nectar?)
+ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Treatment_worded)) +
+  geom_point() +
+  labs(title = "Medicago sativa",
+       x = "Nectar volume (mm)",
+       y = "Inflorescence length (mm)",
+       color = "Treatment") +
+  theme_minimal() 
+# Save
+# ggsave("Graphs/Nectar_and_inflorescence_length_scatterplot_no_line_treatment.png", width = 8, height = 6, dpi = 300)
 
+ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Cultivar)) +
+  geom_point() +
+  labs(title = "Medicago sativa",
+       x = "Nectar volume (mm)",
+       y = "Inflorescence length (mm)",
+       color = "Cultivar") +
+  theme_minimal() 
+# Save
+# ggsave("Graphs/Nectar_and_inflorescence_length_scatterplot_no_line_cultivar.png", width = 8, height = 6, dpi = 300)
 
+# Try the point plot but now with a line
+ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Treatment_worded)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "Medicago sativa",
+       x = "Nectar volume (mm)",
+       y = "Inflorescence length (mm)",
+       color = "Treatment") +
+  theme_minimal() 
+# Save
+# ggsave("Graphs/Nectar_and_inflorescence_length_scatterplot_line_SE_treatment.png", width = 8, height = 6, dpi = 300)
 
+ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Treatment_worded)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Medicago sativa",
+       x = "Nectar volume (mm)",
+       y = "Inflorescence length (mm)",
+       color = "Treatment") +
+  theme_minimal() 
+# Save
+# ggsave("Graphs/Nectar_and_inflorescence_length_scatterplot_line__no_SE_treatment.png", width = 8, height = 6, dpi = 300)
 
+# Make the same ones, but than with cultivar
+ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Cultivar)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "Medicago sativa",
+       x = "Nectar volume (mm)",
+       y = "Inflorescence length (mm)",
+       color = "Treatment") +
+  theme_minimal() 
+# Save
+# ggsave("Graphs/Nectar_and_inflorescence_length_scatterplot_line_SE_Cultivar.png", width = 8, height = 6, dpi = 300)
 
+ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Cultivar)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Medicago sativa",
+       x = "Nectar volume (mm)",
+       y = "Inflorescence length (mm)",
+       color = "Cultivar") +
+  theme_minimal() 
+# Save
+# ggsave("Graphs/Nectar_and_inflorescence_length_scatterplot_line__no_SE_Cultivar.png", width = 8, height = 6, dpi = 300)
 
+# Also see how it looks when nectar is on the y-axis
+ggplot(Combined_data, aes(y = Filled_until_mm, x = Average_Inflorescence_Length, color = Treatment_worded)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Medicago sativa",
+       y = "Nectar volume (mm)",
+       x = "Inflorescence length (mm)",
+       color = "Treatment_worded") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Inflorescence_length_with_nectar_scatterplot_line_no_SE_treatment.png", width = 8, height = 6, dpi = 300)
 
+ggplot(Combined_data, aes(y = Filled_until_mm, x = Average_Inflorescence_Length, color = Cultivar)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Medicago sativa",
+       y = "Nectar volume (mm)",
+       x = "Inflorescence length (mm)",
+       color = "Cultivar") +
+  theme_minimal() 
+# Save
+# ggsave("Graphs/Inflorescence_length_with_nectar_scatterplot_line_no_SE_Cultivar.png", width = 8, height = 6, dpi = 300)
+
+# Nectar with the total arthropod visitors
+ggplot(Combined_data, aes(x = Total_arthropods, y = Filled_until_mm, color = Treatment_worded)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Medicago sativa",
+       x = "Total arthropods",
+       y = "Nectar volume (mm)",
+       color = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Total_arthropods_with_nectar_scatterplot_line_no_SE_treatment.png", width = 8, height = 6, dpi = 300)
+
+# Also try to see cultivar differences
+ggplot(Combined_data, aes(x = Total_arthropods, y = Filled_until_mm, color = Cultivar)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Medicago sativa",
+       x = "Total arthropods",
+       y = "Nectar volume (mm)",
+       color = "Cultivar") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Total_arthropods_with_nectar_scatterplot_line_no_SE_cultivar.png", width = 8, height = 6, dpi = 300)
+
+# Make the arthropods in long table format
+# First inspect how it looks like
+Combined_data[, c("Bibio_marci",
+                  "Bombus_pascuorum",
+                  "Empis_tessellata",
+                  "Larinioides_cornutus")]
+
+Combined_data_arthropods <- Combined_data |>
+  pivot_longer(
+    cols = c(Bibio_marci,
+             Bombus_pascuorum,
+             Empis_tessellata,
+             Larinioides_cornutus),
+    names_to = "Genus",
+    values_to = "Count"
+  )
+
+table(Combined_data_arthropods$Genus)
+
+arth_summary <- Combined_data_arthropods |>
+  group_by(Cultivar, Genus) |>
+  summarise(Count = sum(Count), .groups = "drop")
+
+# Then make the plot to show total arthropods (and composition) per cultivar
+ggplot(arth_summary,
+       aes(x = Cultivar,
+           y = Count,
+           fill = Genus)) +
+  geom_col() +
+  labs(
+    title = "Arthropod community composition by cultivar",
+    y = "Total observations"
+  ) +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Total_arthropods_with_cultivar_pointplot_cultivar.png", width = 8, height = 6, dpi = 300)
+
+# Nectar with roots
+ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, color = Treatment_worded)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Medicago sativa",
+       x = "Root abundance",
+       y = "Nectar volume (mm)",
+       color = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Root_abundance_with_nectar_scatterplot_line_no_SE_treatment.png", width = 8, height = 6, dpi = 300)
+
+ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, color = Cultivar)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Medicago sativa",
+       x = "Root abundance",
+       y = "Nectar volume (mm)",
+       color = "Cultivar") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Root_abundance_with_nectar_scatterplot_line_no_SE_cultivar.png", width = 8, height = 6, dpi = 300)
 
 
 
