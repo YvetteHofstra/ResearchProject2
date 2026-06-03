@@ -339,6 +339,58 @@ ggplot(arth_summary,
 # Save
 # ggsave("Graphs/Total_arthropods_with_cultivar_pointplot_cultivar.png", width = 8, height = 6, dpi = 300)
 
+# Try visitation with time block
+ggplot(Combined_data, aes(x = Time, y = Total_arthropods, color = Treatment_worded)) +
+  geom_point(size = 2) +
+  labs(title = "Medicago sativa",
+       x = "Time block",
+       y = "Total arthropods",
+       color = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Total_arthropods_with_time_block_scatterplot_treatment.png", width = 8, height = 6, dpi = 300)
+
+ggplot(Combined_data, aes(x = Time, y = Total_arthropods, color = Cultivar)) +
+  geom_point(size = 2) +
+  labs(title = "Medicago sativa",
+       x = "Time block",
+       y = "Total arthropods",
+       color = "Cultivar") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Total_arthropods_with_time_block_scatterplot_cultivar.png", width = 8, height = 6, dpi = 300)
+
+
+
+
+
+
+# Not yet working
+
+arth_time <- Combined_data_arthropods |>
+  group_by(Time) |>
+  summarise(Total = sum(Count), .groups = "drop")
+
+ggplot(arth_time, aes(x = Time, y = Total_arthropods, color = Genus)) +
+  geom_point(size = 2) +
+  labs(title = "Medicago sativa",
+       x = "Time block",
+       y = "Total arthropods",
+       color = "Genus") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Total_arthropods_with_time_block_scatterplot_treatment.png", width = 8, height = 6, dpi = 300)
+
+
+
+
+
+
+
+
+
+
+
 # Nectar with roots
 ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, color = Treatment_worded)) +
   geom_point(size = 2) +
@@ -362,9 +414,38 @@ ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, color = Culti
 # Save
 # ggsave("Graphs/Root_abundance_with_nectar_scatterplot_line_no_SE_cultivar.png", width = 8, height = 6, dpi = 300)
 
+# Now the inflorescences (the ones measured closest to plants outside) and visitors
+obs_summary <- Observations |>
+  group_by(Plant_ID) |>
+  summarise(
+    Total_arthropods = sum(Total_arthropods),
+    .groups = "drop"
+  )
 
+Combined_flower_obs <- Flowers |>
+  left_join(obs_summary, by = "Plant_ID")
 
+ggplot(Combined_flower_obs, aes(x = Total_arthropods, y = Number_Inflorescences, color = Cultivar)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Medicago sativa",
+       y = "Inflorescence (#)",
+       x = "Total arthropods",
+       color = "Cultivar") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Inflorescence_number_arthropod_total_cultivars.png", width = 8, height = 6, dpi = 300)
 
+ggplot(Combined_flower_obs, aes(y = Total_arthropods, x = Number_Inflorescences, color = Cultivar)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Medicago sativa",
+       x = "Inflorescence (#)",
+       y = "Total arthropods",
+       color = "Cultivar") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/arthropod_total_Inflorescence_number_cultivars.png", width = 8, height = 6, dpi = 300)
 
 
 
