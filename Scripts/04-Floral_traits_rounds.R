@@ -106,6 +106,16 @@ ggplot(Flowers, aes(x = Treatment_worded, y = Average_Inflorescence_Length, fill
 # Save
 # ggsave("Graphs/Inflorescence_length_treatment_boxplot_cultivar_rounds.png", width = 8, height = 6, dpi = 300)
 
+ggplot(Flowers, aes(x = Cultivar, y = Average_Inflorescence_Length, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(title = "Inflorescence length of Medicago sativa",
+       x = "Cultivar",
+       y = "Inflorescence length (mm)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Inflorescence_length_treatment_boxplot_cultivar_no_facet.png", width = 8, height = 6, dpi = 300)
+
 # After the first round, the flowering dat was noted for each plant, add that data sheet and make some exploratory graphs
 Flowering_date <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1460555223&single=true&output=csv") 
 
