@@ -116,6 +116,18 @@ ggplot(Flowers, aes(x = Cultivar, y = Average_Inflorescence_Length, fill = Treat
 # Save
 # ggsave("Graphs/Inflorescence_length_treatment_boxplot_cultivar_no_facet.png", width = 8, height = 6, dpi = 300)
 
+# Check if it makes sense to add significance to the plot 
+model_inflorescence_length <- glm.nb(Average_Inflorescence_Length ~ Cultivar * Treatment_worded, data = Flowers)
+m2 <- glm.nb(Average_Inflorescence_Length ~ Cultivar + Treatment_worded, data = Flowers)
+m3 <- glm.nb(Average_Inflorescence_Length ~ Cultivar, data = Flowers)
+m4 <- glm.nb(Average_Inflorescence_Length ~ Treatment_worded, data = Flowers)
+
+anova(model_inflorescence_length)
+anova(m2)
+anova(m3)
+anova(m4)
+# Nothing is significant, so do not add significance to plot
+
 # After the first round, the flowering dat was noted for each plant, add that data sheet and make some exploratory graphs
 Flowering_date <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1460555223&single=true&output=csv") 
 
