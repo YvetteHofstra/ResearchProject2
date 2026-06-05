@@ -106,6 +106,58 @@ ggplot(Flowers, aes(x = Treatment_worded, y = Average_Inflorescence_Length, fill
 # Save
 # ggsave("Graphs/Inflorescence_length_treatment_boxplot_cultivar_rounds.png", width = 8, height = 6, dpi = 300)
 
+# After the first round, the flowering dat was noted for each plant, add that data sheet and make some exploratory graphs
+Flowering_date <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1460555223&single=true&output=csv") 
+
+# Show the type of data R will treat it as (numeric, character, factor, etc.)
+str(Flowering_date)
+
+# Make numeric 
+Flowering_date$Date_numbered <- as.numeric(Flowering_date$Date_numbered)
+Flowering_date$Flowered <- as.factor(Flowering_date$Flowered)
+
+ggplot(Flowering_date, aes(x = Treatment_worded, y = Flowered, fill = Treatment_worded)) +
+  geom_boxplot() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Flowering success of Medicago sativa",
+       x = "Treatment",
+       y = "Flowered",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Flowering_success.png", width = 8, height = 6, dpi = 300)
+
+ggplot(Flowering_date, aes(x = Treatment_worded, y = Date_numbered, fill = Treatment_worded)) +
+  geom_boxplot() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Flowering timing of Medicago sativa",
+       x = "Treatment",
+       y = "Flowering since",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Flowering_date_numbered_not_date_itself.png", width = 8, height = 6, dpi = 300)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
