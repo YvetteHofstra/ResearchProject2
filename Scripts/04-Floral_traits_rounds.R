@@ -136,7 +136,13 @@ str(Flowering_date)
 
 # Make numeric 
 Flowering_date$Date_numbered <- as.numeric(Flowering_date$Date_numbered)
-Flowering_date$Flowered <- as.factor(Flowering_date$Flowered)
+
+# Flowered, but change to have the yes (1) and no (0) as labels
+Flowering_date$Flowered <- factor(
+  Flowering_date$Flowered,
+  levels = c(0, 1),
+  labels = c("No", "Yes")
+)
 
 ggplot(Flowering_date, aes(x = Treatment_worded, y = Flowered, fill = Treatment_worded)) +
   geom_boxplot() +
@@ -160,6 +166,16 @@ ggplot(Flowering_date, aes(x = Treatment_worded, y = Date_numbered, fill = Treat
 # Save
 # ggsave("Graphs/Flowering_date_numbered_not_date_itself.png", width = 8, height = 6, dpi = 300)
 
+ggplot(Flowering_date, aes(x = Treatment_worded, y = Date, fill = Treatment_worded)) +
+  geom_boxplot() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Flowering timing of Medicago sativa",
+       x = "Treatment",
+       y = "Flowering since",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Flowering_date_as_date_itself.png", width = 8, height = 6, dpi = 300)
 
 
 
