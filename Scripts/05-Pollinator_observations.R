@@ -49,7 +49,7 @@ ggplot(Observations, aes(x = Block, y = Total_arthropods)) +
        y = "Arthropods (#)") +
   theme_minimal()
 # Save
-# ggsave("Graphs/Arthropods_per__block.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Arthropods_per_block.png", width = 8, height = 6, dpi = 300)
 
 ggplot(Observations, aes(x = Cultivar, y = Total_arthropods)) +
   geom_point() +
@@ -67,8 +67,17 @@ ggplot(Observations, aes(x = Treatment_worded, y = Total_arthropods)) +
 # Save
 # ggsave("Graphs/Arthropods_per_treatment.png", width = 8, height = 6, dpi = 300)
 
+ggplot(Observations, aes(x = Cultivar, y = Total_arthropods)) +
+  geom_boxplot() +
+  labs(x = "Cultivar",
+       y = "Arthropods (#)") +
+  theme_minimal()
 
-
+ggplot(Observations, aes(x = Treatment_worded, y = Total_arthropods)) +
+  geom_boxplot() +
+  labs(x = "Treatment",
+       y = "Arthropods (#)") +
+  theme_minimal()
 
 
 
