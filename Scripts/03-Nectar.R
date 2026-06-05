@@ -43,7 +43,7 @@ ggplot(Nectar, aes(x = Cultivar, y = Filled_until_mm)) +
 # Make it into a boxplot
 ggplot(Nectar, aes(x = Cultivar, y = Filled_until_mm, fill = Cultivar)) +
   geom_boxplot() +
-  labs(title = "Number of inflorescences per cultivar of Medicago sativa",
+  labs(title = "Nectar per cultivar of Medicago sativa",
        x = "Cultivar",
        y = "Nectar (mm)") +
   theme_minimal()
