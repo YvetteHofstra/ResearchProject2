@@ -260,12 +260,26 @@ ggplot(Phenotype, aes(x = Treatment_worded, fill = Nodules)) +
 # Save
 # ggsave("Graphs/Nodule_presence_per_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
 
+# The statistics can also be integrated into the plots by using ggstatsplot
+library(ggstatsplot)
 
+# Try to make this boxplot with the ggstatsplot
+ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(title = "Number of inflorescences",
+       x = "Cultivar",
+       y = "Inflorescence (#)",
+       fill = "Treatment") +
+  theme_minimal()
 
-
-
-
-
+ggstatsplot::ggbetweenstats(data = Phenotype, x = Cultivar, y = Number_inflorescences, fill = Treatment_worded, type = "p") + 
+  labs(title = "Number of inflorescences",
+       x = "Cultivar",
+       y = "Inflorescence (#)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/ggstatsplot_number_inflorescences.png", width = 8, height = 6, dpi = 300)
 
 
 
