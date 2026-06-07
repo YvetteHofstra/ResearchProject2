@@ -72,10 +72,21 @@ ggplot(Combined_data, aes(x = Number_Inflorescences, y = Filled_until_mm)) +
 # Save
 # ggsave("Graphs/Nectar_and_inflorescences_pointplot.png", width = 8, height = 6, dpi = 300)
 
-# Now make it more concrete by adding treatment and cultivar
+# Colour the treatment
 ggplot(Combined_data, aes(x = Number_Inflorescences, y = Filled_until_mm, color = Treatment_worded)) +
   geom_point() +
   labs(title = "Medicago sativa",
+       x = "Nectar volume (mm)",
+       y = "Inflorescence (#)",
+       color = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Nectar_and_inflorescences_pointplot_treatment.png", width = 8, height = 6, dpi = 600)
+
+# Now make it more concrete by adding treatment and cultivar
+ggplot(Combined_data, aes(x = Number_Inflorescences, y = Filled_until_mm, color = Treatment_worded)) +
+  geom_point() +
+  labs(title = "Medicago sativa inflorescence x nectar",
        x = "Nectar volume (mm)",
        y = "Inflorescence (#)",
        color = "Treatment") +
@@ -87,7 +98,7 @@ ggplot(Combined_data, aes(x = Number_Inflorescences, y = Filled_until_mm, color 
 # Try the point plot but now with a line
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_Inflorescences, color = Treatment_worded)) +
   geom_point() +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence x nectar",
        y = "Nectar volume (mm)",
        x = "Inflorescence (#)",
        color = "Treatment") +
@@ -99,7 +110,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_Inflorescences, color 
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_Inflorescences, color = Treatment_worded)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = TRUE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence x nectar",
        x = "Nectar volume (mm)",
        y = "Inflorescence (#)",
        color = "Treatment") +
@@ -111,7 +122,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_Inflorescences, color 
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_Inflorescences, color = Treatment_worded)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence x nectar",
        x = "Nectar volume (mm)",
        y = "Number of inflorescences",
        color = "Treatment") +
@@ -122,7 +133,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_Inflorescences, color 
 # Do the same for # flowers
 ggplot(Combined_data, aes(x = Number_flowers, y = Filled_until_mm)) +
   geom_point() +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa flowers x nectar",
        x = "Nectar volume (mm)",
        y = "Flowers (#)") +
   theme_minimal()
@@ -132,7 +143,7 @@ ggplot(Combined_data, aes(x = Number_flowers, y = Filled_until_mm)) +
 # Now make it more concrete by adding treatment and cultivar
 ggplot(Combined_data, aes(x = Number_flowers, y = Filled_until_mm, color = Treatment_worded)) +
   geom_point() +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa flowers x nectar",
        x = "Nectar volume (mm)",
        y = "Flowers (#)",
        color = "Treatment") +
@@ -144,7 +155,7 @@ ggplot(Combined_data, aes(x = Number_flowers, y = Filled_until_mm, color = Treat
 # Boxplot try, but does not make sense since both are counted and axes do not look nice when trying to fit it into a boxplot
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_flowers, fill = Treatment_worded)) +
   geom_boxplot() +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa flowers x nectar",
        y = "Nectar volume (mm)",
        x = "Flowers (#)",
        fill = "Treatment") +
@@ -156,7 +167,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_flowers, fill = Treatm
 # Try the point plot but now with a line
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_flowers, color = Treatment_worded)) +
   geom_point() +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa flowers x nectar",
        y = "Nectar volume (mm)",
        x = "Flowers (#)",
        color = "Treatment") +
@@ -168,7 +179,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_flowers, color = Treat
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_flowers, color = Treatment_worded)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = TRUE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa flowers x nectar",
        x = "Nectar volume (mm)",
        y = "Number of flowers",
        color = "Treatment") +
@@ -180,7 +191,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_flowers, color = Treat
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_flowers, color = Treatment_worded)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa flowers x nectar",
        x = "Nectar volume (mm)",
        y = "Number of flowers",
        color = "Treatment") +
@@ -191,7 +202,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_flowers, color = Treat
 # Try to combine inflorescence length and nectar (does length correlate to nectar?)
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Treatment_worded)) +
   geom_point() +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence length x nectar",
        x = "Nectar volume (mm)",
        y = "Inflorescence length (mm)",
        color = "Treatment") +
@@ -201,7 +212,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length,
 
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Cultivar)) +
   geom_point() +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence length x nectar",
        x = "Nectar volume (mm)",
        y = "Inflorescence length (mm)",
        color = "Cultivar") +
@@ -213,7 +224,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length,
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Treatment_worded)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = TRUE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence length x nectar",
        x = "Nectar volume (mm)",
        y = "Inflorescence length (mm)",
        color = "Treatment") +
@@ -224,7 +235,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length,
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Treatment_worded)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence length x nectar",
        x = "Nectar volume (mm)",
        y = "Inflorescence length (mm)",
        color = "Treatment") +
@@ -236,7 +247,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length,
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Cultivar)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = TRUE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence length x nectar",
        x = "Nectar volume (mm)",
        y = "Inflorescence length (mm)",
        color = "Treatment") +
@@ -247,7 +258,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length,
 ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length, color = Cultivar)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence length x nectar",
        x = "Nectar volume (mm)",
        y = "Inflorescence length (mm)",
        color = "Cultivar") +
@@ -259,7 +270,7 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Average_Inflorescence_Length,
 ggplot(Combined_data, aes(y = Filled_until_mm, x = Average_Inflorescence_Length, color = Treatment_worded)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence length x nectar",
        y = "Nectar volume (mm)",
        x = "Inflorescence length (mm)",
        color = "Treatment_worded") +
@@ -270,7 +281,7 @@ ggplot(Combined_data, aes(y = Filled_until_mm, x = Average_Inflorescence_Length,
 ggplot(Combined_data, aes(y = Filled_until_mm, x = Average_Inflorescence_Length, color = Cultivar)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence length x nectar",
        y = "Nectar volume (mm)",
        x = "Inflorescence length (mm)",
        color = "Cultivar") +
@@ -282,7 +293,7 @@ ggplot(Combined_data, aes(y = Filled_until_mm, x = Average_Inflorescence_Length,
 ggplot(Combined_data, aes(x = Total_arthropods, y = Filled_until_mm, color = Treatment_worded)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa arthropods x nectar",
        x = "Total arthropods",
        y = "Nectar volume (mm)",
        color = "Treatment") +
@@ -294,7 +305,7 @@ ggplot(Combined_data, aes(x = Total_arthropods, y = Filled_until_mm, color = Tre
 ggplot(Combined_data, aes(x = Total_arthropods, y = Filled_until_mm, color = Cultivar)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa arthropods x nectar",
        x = "Total arthropods",
        y = "Nectar volume (mm)",
        color = "Cultivar") +
@@ -342,7 +353,7 @@ ggplot(arth_summary,
 # Try visitation with time block
 ggplot(Combined_data, aes(x = Time, y = Total_arthropods, color = Treatment_worded)) +
   geom_point(size = 2) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa arthropod abundance",
        x = "Time block",
        y = "Total arthropods",
        color = "Treatment") +
@@ -352,7 +363,7 @@ ggplot(Combined_data, aes(x = Time, y = Total_arthropods, color = Treatment_word
 
 ggplot(Combined_data, aes(x = Time, y = Total_arthropods, color = Cultivar)) +
   geom_point(size = 2) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa arthropod abundance",
        x = "Time block",
        y = "Total arthropods",
        color = "Cultivar") +
@@ -395,7 +406,7 @@ ggplot(arth_time, aes(x = Time, y = Total_arthropods, color = Genus)) +
 ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, color = Treatment_worded)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa roots x nectar",
        x = "Root abundance",
        y = "Nectar volume (mm)",
        color = "Treatment") +
@@ -406,13 +417,33 @@ ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, color = Treat
 ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, color = Cultivar)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa roots x nectar",
        x = "Root abundance",
        y = "Nectar volume (mm)",
        color = "Cultivar") +
   theme_minimal()
 # Save
 # ggsave("Graphs/Root_abundance_with_nectar_scatterplot_line_no_SE_cultivar.png", width = 8, height = 6, dpi = 300)
+
+ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(title = "Nectar volume by root abundance",
+       x = "Root abundance",
+       y = "Nectar volume (mm)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Root_abundance_with_nectar_boxplot_treatment.png", width = 8, height = 6, dpi = 300)
+
+ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, fill = Cultivar)) +
+  geom_boxplot() +
+  labs(title = "Nectar volume by root abundance",
+       x = "Root abundance",
+       y = "Nectar volume (mm)",
+       fill = "Cultivar") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Root_abundance_with_nectar_boxplot_cultivar.png", width = 8, height = 6, dpi = 300)
 
 # Now the inflorescences (the ones measured closest to plants outside) and visitors
 obs_summary <- Observations |>
@@ -428,7 +459,7 @@ Combined_flower_obs <- Flowers |>
 ggplot(Combined_flower_obs, aes(x = Total_arthropods, y = Number_Inflorescences, color = Cultivar)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence x arthropod",
        y = "Inflorescence (#)",
        x = "Total arthropods",
        color = "Cultivar") +
@@ -439,7 +470,7 @@ ggplot(Combined_flower_obs, aes(x = Total_arthropods, y = Number_Inflorescences,
 ggplot(Combined_flower_obs, aes(y = Total_arthropods, x = Number_Inflorescences, color = Cultivar)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Medicago sativa",
+  labs(title = "Medicago sativa inflorescence x arthropod",
        x = "Inflorescence (#)",
        y = "Total arthropods",
        color = "Cultivar") +
