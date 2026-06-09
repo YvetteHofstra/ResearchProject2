@@ -94,8 +94,25 @@ ggplot(Nectar, aes(x = Cultivar, y = Filled_until_mm, fill = Treatment_worded)) 
 # Save
 # ggsave("Graphs/Nectar_length_cultivar_boxplot_treatment_no_facet.png", width = 8, height = 6, dpi = 300)
 
-
-
+# Now combine the data points with a boxplot
+ggplot(Nectar,
+       aes(x = Cultivar,
+           y = Filled_until_mm,
+           fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(color = "black",
+              position = position_jitterdodge(
+                jitter.width = 0.15,
+                dodge.width = 0.75
+              ),
+              size = 2) +
+  labs(title = "Nectar per treatment of Medicago sativa",
+       x = "Cultivar",
+       y = "Nectar (mm)",
+       fill = "Treatment") +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Nectar_length_cultivar_boxplot_treatment_no_facet_points.png", width = 8, height = 6, dpi = 300)
 
 
 
