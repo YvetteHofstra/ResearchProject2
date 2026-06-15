@@ -180,7 +180,17 @@ ggplot(Flowering_date, aes(x = Treatment_worded, y = Date, fill = Treatment_word
 # As seen, the date is not looking nice in these plots. Change to as.date
 Flowering_date$Date <- as.Date(Flowering_date$Date)
 
+Dates <- data.frame(aes(Flowering_date),
+  Date = as.Date("06-05-2026", "13-05-2026", "20-05-2026", "22-05-2026", "01-06-2026", "03-06-2026", "09-06-2026", "12-06-2026"))
 
+ggplot(Dates, aes(x = Treatment_worded, y = Date, fill = Treatment_worded)) +
+  geom_boxplot() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Flowering timing of Medicago sativa",
+       x = "Treatment",
+       y = "Flowering since",
+       fill = "Treatment") +
+  theme_minimal()
 
 
 
