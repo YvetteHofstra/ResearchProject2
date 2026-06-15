@@ -289,6 +289,66 @@ ggplot(Combined_data, aes(y = Filled_until_mm, x = Average_Inflorescence_Length,
 # Save
 # ggsave("Graphs/Inflorescence_length_with_nectar_scatterplot_line_no_SE_Cultivar.png", width = 8, height = 6, dpi = 300)
 
+# Try some models combining nectar and inflorescence # and inflorescence length
+m1 <- glm.nb(Filled_until_mm ~ Number_Inflorescences + Cultivar * Treatment_worded, data = Combined_data)
+m2 <- glm.nb(Filled_until_mm ~ Number_Inflorescences + Cultivar + Treatment_worded, data = Combined_data)
+m3 <- glm.nb(Filled_until_mm ~ Number_Inflorescences + Cultivar, data = Combined_data)
+m4 <- glm.nb(Filled_until_mm ~ Number_Inflorescences + Treatment_worded, data = Combined_data)
+m5 <- glm.nb(Filled_until_mm ~ Number_Inflorescences, data = Combined_data)
+m6 <- glm.nb(Filled_until_mm ~ Number_Inflorescences + Cultivar, data = Combined_data)
+m7 <- glm.nb(Filled_until_mm ~ Number_Inflorescences + Treatment_worded, data = Combined_data)
+
+anova(m1)
+anova(m2)
+anova(m3)
+anova(m4)
+anova(m5)
+anova(m6)
+anova(m7)
+
+AIC(m1, m2, m3, m4, m5, m6, m7)
+# Overall this shows m2 to be preferred, lowest AIC.Not significantly different from m1.
+
+m1 <- glm.nb(Filled_until_mm ~ Average_Inflorescence_Length + Cultivar * Treatment_worded, data = Combined_data)
+m2 <- glm.nb(Filled_until_mm ~ Average_Inflorescence_Length + Cultivar + Treatment_worded, data = Combined_data)
+m3 <- glm.nb(Filled_until_mm ~ Average_Inflorescence_Length + Cultivar, data = Combined_data)
+m4 <- glm.nb(Filled_until_mm ~ Average_Inflorescence_Length + Treatment_worded, data = Combined_data)
+m5 <- glm.nb(Filled_until_mm ~ Average_Inflorescence_Length, data = Combined_data)
+m6 <- glm.nb(Filled_until_mm ~ Average_Inflorescence_Length + Cultivar, data = Combined_data)
+m7 <- glm.nb(Filled_until_mm ~ Average_Inflorescence_Length + Treatment_worded, data = Combined_data)
+
+anova(m1)
+anova(m2)
+anova(m3)
+anova(m4)
+anova(m5)
+anova(m6)
+anova(m7)
+
+AIC(m1, m2, m3, m4, m5, m6, m7)
+# Overall this shows m1 to be preferred, lowest AIC.
+
+# Less logical as flowers were counted quite long before nectar was collected
+m1 <- glm.nb(Filled_until_mm ~ Number_flowers + Cultivar * Treatment_worded, data = Combined_data)
+m2 <- glm.nb(Filled_until_mm ~ Number_flowers + Cultivar + Treatment_worded, data = Combined_data)
+m3 <- glm.nb(Filled_until_mm ~ Number_flowers + Cultivar, data = Combined_data)
+m4 <- glm.nb(Filled_until_mm ~ Number_flowers + Treatment_worded, data = Combined_data)
+m5 <- glm.nb(Filled_until_mm ~ Number_flowers, data = Combined_data)
+m6 <- glm.nb(Filled_until_mm ~ Number_flowers + Cultivar, data = Combined_data)
+m7 <- glm.nb(Filled_until_mm ~ Number_flowers + Treatment_worded, data = Combined_data)
+
+anova(m1)
+anova(m2)
+anova(m3)
+anova(m4)
+anova(m5)
+anova(m6)
+anova(m7)
+
+AIC(m1, m2, m3, m4, m5, m6, m7)
+# Overall this shows m1 to be preferred, lowest AIC. But m1 and m2 are very similar in AIC.
+
+
 # Nectar with the total arthropod visitors
 ggplot(Combined_data, aes(x = Total_arthropods, y = Filled_until_mm, color = Treatment_worded)) +
   geom_point(size = 2) +
