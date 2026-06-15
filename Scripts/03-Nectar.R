@@ -114,9 +114,51 @@ ggplot(Nectar,
 # Save
 # ggsave("Graphs/Nectar_length_cultivar_boxplot_treatment_no_facet_points.png", width = 8, height = 6, dpi = 300)
 
+# Now remove the plants we did not fully harvest (as we had enough) 
+# This means exclude A76, V64, V67, V68, V71, V73, C89, C85, C64, C68, C73, C76, C62
+# Then we can make a plot to show: per plant x nectar, keep control and treatment
+ggplot(Nectar, aes(x = Plant_ID, y = Filled_until_mm, fill = Plant_ID)) +
+  geom_boxplot() +
+  labs(title = "Nectar per plant of Medicago sativa",
+       x = "Plants (#)",
+       y = "Nectar (mm)") +
+  theme_minimal()
+# That is all plants
 
+# Now delete the plants we did not fully harvest
+Nectar_cleaned <- Nectar %>%
+  filter(!Plant_ID %in% c("A76", "V64", "V67", "V68", "V71", "V73", "C89", "C85", "C64", "C68", "C73", "C76", "C62"))
+ggplot(Nectar_cleaned, aes(x = Plant_ID, y = Filled_until_mm, fill = Plant_ID)) +
+  geom_boxplot() +
+  labs(title = "Nectar per plant of Medicago sativa",
+       x = "Plants (#)",
+       y = "Nectar (mm)") +
+  theme_minimal()
 
+ggplot(Nectar_cleaned, aes(x = Cultivar, y = Filled_until_mm, fill = Cultivar)) +
+  geom_boxplot() +
+  labs(title = "Nectar per cultivar of Medicago sativa",
+       x = "Cultivar",
+       y = "Nectar (mm)") +
+  theme_minimal()
 
+# Use the 'cleaned' to make the boxplot with treatment separated as well
+ggplot(Nectar_cleaned,
+       aes(x = Cultivar,
+           y = Filled_until_mm,
+           fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(color = "black",
+              position = position_jitterdodge(
+                jitter.width = 0.15,
+                dodge.width = 0.75
+              ),
+              size = 2) +
+  labs(title = "Nectar per treatment of Medicago sativa",
+       x = "Cultivar",
+       y = "Nectar (mm)",
+       fill = "Treatment") +
+  theme_minimal()
 
 
 
