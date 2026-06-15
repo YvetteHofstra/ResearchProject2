@@ -87,6 +87,10 @@ anova(m2)
 anova(m3)
 anova(m4)
 
+AIC(m1, m2, m3, m4)
+# Overall this shows m3 to be preferred, lowest AIC. 
+
+
 # Is the number of inflorescences significantly different between cultivars
 m1 <- glm.nb(Number_inflorescences ~ Cultivar * Treatment_worded, data = Phenotype)
 m2 <- glm.nb(Number_inflorescences ~ Cultivar + Treatment_worded, data = Phenotype)
@@ -97,6 +101,9 @@ anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+
+AIC(m1, m2, m3, m4)
+# Overall this shows m3 to be preferred, lowest AIC. No significant difference (AIC <2) but it is also the most parsimonious. 
 
 
 # ---- Nectar models ----
@@ -112,6 +119,9 @@ anova(m2)
 anova(m3)
 anova(m4)
 
+AIC(m1, m2, m3, m4)
+# Overall this shows m3 to be preferred, lowest AIC. But not significantly.
+
 # Now remove the plants that were not completely tried 
 Nectar_cleaned <- Nectar %>%
   filter(!Plant_ID %in% c("A76", "V64", "V67", "V68", "V71", "V73", "C89", "C85", "C64", "C68", "C73", "C76", "C62"))
@@ -126,6 +136,9 @@ anova(m2)
 anova(m3)
 anova(m4)
 
+AIC(m1, m2, m3, m4)
+# Overall this shows m4 to be preferred, lowest AIC. But not significantly.
+
 
 # ---- Flower (round) models ----
 
@@ -139,6 +152,9 @@ anova(m2)
 anova(m3)
 anova(m4)
 
+AIC(m1, m2, m3, m4)
+# Overall this shows m4 to be preferred, lowest AIC. But not significantly.
+
 # Now the number of inflorescences with the counting closest to nectar (could later be combined perhaps to figure out significance between nectar and number of inflorescences)
 m1 <- glm.nb(Number_Inflorescences ~ Cultivar * Treatment_worded, data = Flowers)
 m2 <- glm.nb(Number_Inflorescences ~ Cultivar + Treatment_worded, data = Flowers)
@@ -149,6 +165,9 @@ anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+
+AIC(m1, m2, m3, m4)
+# Overall this shows m3 to be preferred, lowest AIC. But not significantly.
 
 
 # ---- Flower (date) models ----
@@ -162,6 +181,9 @@ anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+
+AIC(m1, m2, m3, m4)
+# Overall this shows m3 to be preferred, lowest AIC. But not significantly.
 
 
 # ---- Repotting models ----
@@ -177,6 +199,9 @@ anova(m2)
 anova(m3)
 anova(m4)
 
+AIC(m1, m2, m3, m4)
+# Overall this shows m to be preferred, lowest AIC. But not significantly.
+
 # Seed pod weight
 m1 <- glm.nb(Seed_pod_weight ~ Cultivar * Treatment_worded, data = Repotting)
 m2 <- glm.nb(Seed_pod_weight ~ Cultivar + Treatment_worded, data = Repotting)
@@ -187,6 +212,9 @@ anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+
+AIC(m1, m2, m3, m4)
+# Overall this shows m to be preferred, lowest AIC.
 
 # Seed number
 m1 <- glm.nb(Seed_number ~ Cultivar * Treatment_worded, data = Repotting)
@@ -199,6 +227,9 @@ anova(m2)
 anova(m3)
 anova(m4)
 
+AIC(m1, m2, m3, m4)
+# Overall this shows m to be preferred, lowest AIC.
+
 # Seed weight
 m1 <- glm.nb(Seed_weight ~ Cultivar * Treatment_worded, data = Repotting)
 m2 <- glm.nb(Seed_weight ~ Cultivar + Treatment_worded, data = Repotting)
@@ -210,6 +241,9 @@ anova(m2)
 anova(m3)
 anova(m4)
 
+AIC(m1, m2, m3, m4)
+# Overall this shows m to be preferred, lowest AIC.
+
 # Seed germination?
 m1 <- glm.nb(Seed_germination ~ Cultivar * Treatment_worded, data = Repotting)
 m2 <- glm.nb(Seed_germination ~ Cultivar + Treatment_worded, data = Repotting)
@@ -220,6 +254,9 @@ anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+
+AIC(m1, m2, m3, m4)
+# Overall this shows m to be preferred, lowest AIC.
 
 
 # ---- Soil models ----
@@ -235,6 +272,9 @@ anova(m2)
 anova(m3)
 anova(m4)
 
+AIC(m1, m2, m3, m4)
+# Overall this shows m4 to be preferred, lowest AIC.
+
 # ECp
 m1 <- glm.nb(ECp ~ Cultivar * Treatment_worded, data = Soil)
 m2 <- glm.nb(ECp ~ Cultivar + Treatment_worded, data = Soil)
@@ -245,6 +285,9 @@ anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+
+AIC(m1, m2, m3, m4)
+# Overall this shows m1 to be preferred, lowest AIC. But not significantly.
 
 # Eb
 m1 <- glm.nb(Eb ~ Cultivar * Treatment_worded, data = Soil)
@@ -257,6 +300,9 @@ anova(m2)
 anova(m3)
 anova(m4)
 
+AIC(m1, m2, m3, m4)
+# Overall this shows m to be preferred, lowest AIC.
+
 # ECb
 m1 <- glm.nb(ECb ~ Cultivar * Treatment_worded, data = Soil)
 m2 <- glm.nb(ECb ~ Cultivar + Treatment_worded, data = Soil)
@@ -267,6 +313,9 @@ anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+
+AIC(m1, m2, m3, m4)
+# Overall this shows m4 to be preferred, lowest AIC. But not significantly.
 
 
 # ---- Observation models ----
@@ -287,6 +336,9 @@ anova(m4)
 anova(m5)
 anova(m6)
 anova(m7)
+
+AIC(m1, m2, m3, m4, m5, m6, m7)
+# Overall this shows m1 to be preferred, lowest AIC.
 
 
 # ---- Combined / other models ----
