@@ -79,9 +79,30 @@ ggplot(Observations, aes(x = Treatment_worded, y = Total_arthropods)) +
        y = "Arthropods (#)") +
   theme_minimal()
 
+ggplot(Observations, aes(x = Time, y = Total_arthropods, color = Treatment_worded)) +
+  geom_point() +
+  labs(title = "Medicago sativa pollinators per time",
+       x = "Time",
+       y = "Arthropods (#)",
+       color = "Treatment") +
+  theme_minimal() +
+  facet_wrap(~ Cultivar)
 
+ggplot(Observations, aes(x = Time, y = Total_arthropods, color = Cultivar)) +
+  geom_point() +
+  labs(title = "Medicago sativa pollinators per time",
+       x = "Time",
+       y = "Arthropods (#)",
+       color = "Cultivar") +
+  theme_minimal() 
 
-
+ggplot(Observations, aes(x = Time, y = Total_arthropods, color = Treatment_worded)) +
+  geom_point() +
+  labs(title = "Medicago sativa pollinators per time",
+       x = "Time",
+       y = "Arthropods (#)",
+       color = "Treatment") +
+  theme_minimal() 
 
 
 
