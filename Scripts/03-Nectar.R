@@ -50,6 +50,14 @@ ggplot(Nectar, aes(x = Cultivar, y = Filled_until_mm, fill = Cultivar)) +
 # Save
 # ggsave("Graphs/Nectar_length_boxplot.png", width = 8, height = 6, dpi = 300)
 
+# Make one with the microliter
+ggplot(Nectar, aes(x = Cultivar, y = Microliter, fill = Cultivar)) +
+  geom_boxplot() +
+  labs(title = "Nectar per cultivar of Medicago sativa",
+       x = "Cultivar",
+       y = "Nectar (microliter)") +
+  theme_minimal()
+
 # Now add the treatment
 ggplot(Nectar, aes(x = Treatment_worded, y = Filled_until_mm, fill = Treatment_worded)) +
   geom_boxplot() +
@@ -60,6 +68,15 @@ ggplot(Nectar, aes(x = Treatment_worded, y = Filled_until_mm, fill = Treatment_w
   theme_minimal()
 # Save
 # ggsave("Graphs/Nectar_length_treatment_boxplot.png", width = 8, height = 6, dpi = 300)
+
+# The same but with microliter
+ggplot(Nectar, aes(x = Treatment_worded, y = Microliter, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(title = "Nectar per treatment of Medicago sativa",
+       x = "Treatment",
+       y = "Nectar (microliter)",
+       fill = "Treatment") +
+  theme_minimal()
 
 # Now divide the treatment to also show cultivars
 ggplot(Nectar, aes(x = Treatment_worded, y = Filled_until_mm, fill = Treatment_worded)) +
@@ -114,6 +131,24 @@ ggplot(Nectar,
 # Save
 # ggsave("Graphs/Nectar_length_cultivar_boxplot_treatment_no_facet_points.png", width = 8, height = 6, dpi = 300)
 
+# Make the same one but with microliter
+ggplot(Nectar,
+       aes(x = Cultivar,
+           y = Microliter,
+           fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(color = "black",
+              position = position_jitterdodge(
+                jitter.width = 0.15,
+                dodge.width = 0.75
+              ),
+              size = 2) +
+  labs(title = "Nectar per treatment of Medicago sativa",
+       x = "Cultivar",
+       y = "Nectar (microliter)",
+       fill = "Treatment") +
+  theme_minimal()
+
 # Now remove the plants we did not fully harvest (as we had enough) 
 # This means exclude A76, V64, V67, V68, V71, V73, C89, C85, C64, C68, C73, C76, C62
 # Then we can make a plot to show: per plant x nectar, keep control and treatment
@@ -135,17 +170,26 @@ ggplot(Nectar_cleaned, aes(x = Plant_ID, y = Filled_until_mm, fill = Plant_ID)) 
        y = "Nectar (mm)") +
   theme_minimal()
 
-ggplot(Nectar_cleaned, aes(x = Cultivar, y = Filled_until_mm, fill = Cultivar)) +
+ggplot(Nectar_cleaned, aes(x = Cultivar, y = Microliter, fill = Cultivar)) +
   geom_boxplot() +
   labs(title = "Nectar per cultivar of Medicago sativa",
        x = "Cultivar",
-       y = "Nectar (mm)") +
+       y = "Nectar (microliter)") +
   theme_minimal()
+
+# Check if there are significant differences
+model <- glm.nb(Microliter ~ Cultivar,
+                data = Nectar_cleaned)
+anova(model)
+
+model2 <- glm.nb(Microliter ~ Treatment_worded,
+                 data = Nectar_cleaned)
+anova(model2)
 
 # Use the 'cleaned' to make the boxplot with treatment separated as well
 ggplot(Nectar_cleaned,
        aes(x = Cultivar,
-           y = Filled_until_mm,
+           y = Microliter,
            fill = Treatment_worded)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(color = "black",
@@ -156,7 +200,7 @@ ggplot(Nectar_cleaned,
               size = 2) +
   labs(title = "Nectar per treatment of Medicago sativa",
        x = "Cultivar",
-       y = "Nectar (mm)",
+       y = "Nectar (microliter)",
        fill = "Treatment") +
   theme_minimal()
 
