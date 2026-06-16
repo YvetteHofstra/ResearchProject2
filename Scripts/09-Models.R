@@ -109,10 +109,10 @@ AIC(m1, m2, m3, m4)
 # ---- Nectar models ----
 
 # Is the amount of nectar significantly different between cultivars
-m1 <- glm.nb(Filled_until_mm ~ Cultivar * Treatment_worded, data = Nectar)
-m2 <- glm.nb(Filled_until_mm ~ Cultivar + Treatment_worded, data = Nectar)
-m3 <- glm.nb(Filled_until_mm ~ Cultivar, data = Nectar)
-m4 <- glm.nb(Filled_until_mm ~ Treatment_worded, data = Nectar)
+m1 <- glm.nb(Microliter ~ Cultivar * Treatment_worded, data = Nectar)
+m2 <- glm.nb(Microliter ~ Cultivar + Treatment_worded, data = Nectar)
+m3 <- glm.nb(Microliter ~ Cultivar, data = Nectar)
+m4 <- glm.nb(Microliter ~ Treatment_worded, data = Nectar)
 
 anova(m1)
 anova(m2)
@@ -126,10 +126,10 @@ AIC(m1, m2, m3, m4)
 Nectar_cleaned <- Nectar %>%
   filter(!Plant_ID %in% c("A76", "V64", "V67", "V68", "V71", "V73", "C89", "C85", "C64", "C68", "C73", "C76", "C62"))
 
-m1 <- glm.nb(Filled_until_mm ~ Cultivar * Treatment_worded, data = Nectar_cleaned )
-m2 <- glm.nb(Filled_until_mm ~ Cultivar + Treatment_worded, data = Nectar_cleaned )
-m3 <- glm.nb(Filled_until_mm ~ Cultivar, data = Nectar_cleaned )
-m4 <- glm.nb(Filled_until_mm ~ Treatment_worded, data = Nectar_cleaned )
+m1 <- glm.nb(Microliter ~ Cultivar * Treatment_worded, data = Nectar_cleaned )
+m2 <- glm.nb(Microliter ~ Cultivar + Treatment_worded, data = Nectar_cleaned )
+m3 <- glm.nb(Microliter ~ Cultivar, data = Nectar_cleaned )
+m4 <- glm.nb(Microliter ~ Treatment_worded, data = Nectar_cleaned )
 
 anova(m1)
 anova(m2)
@@ -188,11 +188,12 @@ AIC(m1, m2, m3, m4)
 
 # ---- Repotting models ----
 
+# Seed presence
 # Seed pod number
-m1 <- glm.nb(Seed_pod_number ~ Cultivar * Treatment_worded, data = Repotting)
-m2 <- glm.nb(Seed_pod_number ~ Cultivar + Treatment_worded, data = Repotting)
-m3 <- glm.nb(Seed_pod_number ~ Cultivar, data = Repotting)
-m4 <- glm.nb(Seed_pod_number ~ Treatment_worded, data = Repotting)
+m1 <- glm.nb(Seeds_present ~ Cultivar * Treatment_worded, data = Repotting)
+m2 <- glm.nb(Seeds_present ~ Cultivar + Treatment_worded, data = Repotting)
+m3 <- glm.nb(Seeds_present ~ Cultivar, data = Repotting)
+m4 <- glm.nb(Seeds_present ~ Treatment_worded, data = Repotting)
 
 anova(m1)
 anova(m2)
@@ -201,6 +202,20 @@ anova(m4)
 
 AIC(m1, m2, m3, m4)
 # Overall this shows m to be preferred, lowest AIC. But not significantly.
+
+# Seed pod number
+m1 <- glm.nb(Seed_pod_abundance ~ Cultivar * Treatment_worded, data = Repotting)
+m2 <- glm.nb(Seed_pod_abundance ~ Cultivar + Treatment_worded, data = Repotting)
+m3 <- glm.nb(Seed_pod_abundance ~ Cultivar, data = Repotting)
+m4 <- glm.nb(Seed_pod_abundance ~ Treatment_worded, data = Repotting)
+
+anova(m1)
+anova(m2)
+anova(m3)
+anova(m4)
+
+AIC(m1, m2, m3, m4)
+# Overall this shows m to be preferred, lowest AIC. 
 
 # Seed pod weight
 m1 <- glm.nb(Seed_pod_weight ~ Cultivar * Treatment_worded, data = Repotting)
@@ -217,10 +232,10 @@ AIC(m1, m2, m3, m4)
 # Overall this shows m to be preferred, lowest AIC.
 
 # Seed number
-m1 <- glm.nb(Seed_number ~ Cultivar * Treatment_worded, data = Repotting)
-m2 <- glm.nb(Seed_number ~ Cultivar + Treatment_worded, data = Repotting)
-m3 <- glm.nb(Seed_number ~ Cultivar, data = Repotting)
-m4 <- glm.nb(Seed_number ~ Treatment_worded, data = Repotting)
+m1 <- glm.nb(Seed_abundance ~ Cultivar * Treatment_worded, data = Repotting)
+m2 <- glm.nb(Seed_abundance ~ Cultivar + Treatment_worded, data = Repotting)
+m3 <- glm.nb(Seed_abundance ~ Cultivar, data = Repotting)
+m4 <- glm.nb(Seed_abundance ~ Treatment_worded, data = Repotting)
 
 anova(m1)
 anova(m2)
@@ -301,7 +316,7 @@ anova(m3)
 anova(m4)
 
 AIC(m1, m2, m3, m4)
-# Overall this shows m to be preferred, lowest AIC.
+# Overall this shows m4 to be preferred, lowest AIC.
 
 # ECb
 m1 <- glm.nb(ECb ~ Cultivar * Treatment_worded, data = Soil)
