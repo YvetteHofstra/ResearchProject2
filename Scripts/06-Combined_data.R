@@ -39,6 +39,8 @@ Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr
 
 Observations <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNix7qqZS7cB-KkXmk4Yu7XNvI8uNFhS_ZCfTGwVIziLeXCzH-VlHzEzrndxrzLGgWUj-ssOHRmORV/pub?gid=1102638602&single=true&output=csv")
 
+Soil <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTR4kOxATM525UmU7895FgLFgjHlL2RJ_Cgtb5fepWR-vRVZpwzLF3OIc4ZtvtTDQge1iUkyZY5W8Se/pub?gid=1854960858&single=true&output=csv")
+
 # Replace all NAs in the entire data frame with 0
 Observations <- Observations |>
   mutate_all(~ ifelse(is.na(.), 0, .))
@@ -54,6 +56,8 @@ str(Observations)
 Phenotype$Number_inflorescences <- as.numeric(Phenotype$Number_inflorescences)
 Phenotype$Number_flowers <- as.numeric(Phenotype$Number_flowers)
 Flowers$Number_Inflorescences <- as.numeric(Flowers$Number_Inflorescences)
+Soil$ECp <- as.numeric(Soil$ECp)
+Soil$ECb <- as.numeric(Soil$ECb)
 
 # Combine the data frames into one data frame, using the common column "Plant_ID" to be able to work with all data in one data frame.
 Combined_data <- Phenotype %>%
@@ -537,6 +541,35 @@ ggplot(Combined_flower_obs, aes(y = Total_arthropods, x = Number_Inflorescences,
   theme_minimal()
 # Save
 # ggsave("Graphs/arthropod_total_Inflorescence_number_cultivars.png", width = 8, height = 6, dpi = 300)
+
+
+# Combine the data frames into one data frame, using the common column "Plant_ID" to be able to work with all data in one data frame.
+Nectar_cleaned <- Nectar %>%
+  filter(!Plant_ID %in% c("A76", "V64", "V67", "V68", "V71", "V73", "C89", "C85", "C64", "C68", "C73", "C76", "C62"))
+
+Combined <- Phenotype %>%
+  #  left_join(Nectar, by = "Plant_ID") %>%
+  left_join(Nectar_cleaned, by = "Plant_ID") %>%
+  left_join(Flowers, by = "Plant_ID") %>%
+  left_join(Repotting, by = "Plant_ID") %>%
+  left_join(Observations, by = "Plant_ID") %>%
+  left_join(Soil, by = "Plant_ID") 
+
+ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(title = "Nectar volume by root abundance",
+       x = "Root abundance",
+       y = "Nectar volume (microliter)",
+       fill = "Treatment") +
+  theme_minimal()
+
+
+
+
+
+
+
+
 
 
 
