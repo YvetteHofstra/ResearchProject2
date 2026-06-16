@@ -386,6 +386,20 @@ anova(m7)
 AIC(m1, m2, m3, m4, m5, m6, m7)
 # Overall this shows m2 to be preferred, lowest AIC.
 
+m1 <- glm.nb(Microliter ~ Total_arthropods, data = Combined_data)
+m2 <- glm.nb(Microliter ~ Total_arthropods + Cultivar + Treatment_worded, data = Combined_data)
+m3 <- glm.nb(Microliter ~ Total_arthropods + Cultivar, data = Combined_data)
+m4 <- glm.nb(Microliter ~ Total_arthropods + Treatment_worded, data = Combined_data)
+m5 <- glm.nb(Microliter ~ Total_arthropods + Cultivar * Treatment_worded, data = Combined_data)
+
+anova(m1)
+anova(m2)
+anova(m3)
+anova(m4)
+anova(m5)
+
+AIC(m1, m2, m3, m4, m5)
+# Overall this shows m5 to be preferred, lowest AIC. But not significant.
 
 
 
