@@ -11,6 +11,8 @@ library(tidyverse) # Includes ggplot2, dplyr, etc. can also add them separately
 # load the required packages
 library(tidyverse)
 library(ggplot2)
+library(glmmTMB)
+library(gtsummary)
 library(dplyr)
 library(chemodiv)
 library(corrr)
@@ -81,15 +83,30 @@ m1 <- glm.nb(Number_flowers ~ Cultivar * Treatment_worded, data = Phenotype)
 m2 <- glm.nb(Number_flowers ~ Cultivar + Treatment_worded, data = Phenotype)
 m3 <- glm.nb(Number_flowers ~ Cultivar, data = Phenotype)
 m4 <- glm.nb(Number_flowers ~ Treatment_worded, data = Phenotype)
+m5 <- glmmTMB(Number_flowers ~ Cultivar * Treatment_worded, family = nbinom2, data = Phenotype)
+m6 <- glmmTMB(Number_flowers ~ Cultivar + Treatment_worded, family = nbinom2, data = Phenotype)
+m7 <- glmmTMB(Number_flowers ~ Cultivar, family = nbinom2, data = Phenotype)
+m8 <- glmmTMB(Number_flowers ~ Treatment_worded, family = nbinom2, data = Phenotype)
 
 anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+anova(m5, m6, m7, m8) # m7 is best of these
 
-AIC(m1, m2, m3, m4)
-# Overall this shows m3 to be preferred, lowest AIC. 
+AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+# Overall this shows m3 and m7 to be preferred, lowest AIC. Both exact same AIC, also not significant from m2. Can just use the glm.nb as there are no random factors here.
 
+Model <- glm.nb(Number_flowers ~ Cultivar, data = Phenotype)
+car::Anova(Model , type = "III")
+ModelglmmTMB <- glmmTMB(Number_flowers ~ Cultivar, family = nbinom2, data = Phenotype)
+car::Anova(ModelglmmTMB , type = "III")
+
+# Display the results with significant effects highlighted
+tbl_regression(Model) %>%
+  bold_p()
+tbl_regression(ModelglmmTMB) %>%
+  bold_p()
 
 # Is the number of inflorescences significantly different between cultivars
 m1 <- glm.nb(Number_inflorescences ~ Cultivar * Treatment_worded, data = Phenotype)
@@ -105,6 +122,8 @@ anova(m4)
 AIC(m1, m2, m3, m4)
 # Overall this shows m3 to be preferred, lowest AIC. No significant difference (AIC <2) but it is also the most parsimonious. 
 
+Model <- glm.nb(Number_inflorescences ~ Cultivar, data = Phenotype)
+car::Anova(Model , type = "III")
 
 # ---- Nectar models ----
 
@@ -121,6 +140,9 @@ anova(m4)
 
 AIC(m1, m2, m3, m4)
 # Overall this shows m3 to be preferred, lowest AIC. But not significantly.
+
+Model <- glm.nb(Microliter ~ Cultivar, data = Nectar)
+car::Anova(Model , type = "III")
 
 # Now remove the plants that were not completely tried 
 Nectar_cleaned <- Nectar %>%
@@ -139,6 +161,9 @@ anova(m4)
 AIC(m1, m2, m3, m4)
 # Overall this shows m4 to be preferred, lowest AIC. But not significantly.
 
+Model <- glm.nb(Microliter ~ Treatment_worded, data = Nectar_cleaned)
+car::Anova(Model , type = "III")
+
 
 # ---- Flower (round) models ----
 
@@ -155,6 +180,9 @@ anova(m4)
 AIC(m1, m2, m3, m4)
 # Overall this shows m4 to be preferred, lowest AIC. But not significantly.
 
+Model <- glm.nb(Average_Inflorescence_Length ~ Treatment_worded, data = Flowers)
+car::Anova(Model , type = "III")
+
 # Now the number of inflorescences with the counting closest to nectar (could later be combined perhaps to figure out significance between nectar and number of inflorescences)
 m1 <- glm.nb(Number_Inflorescences ~ Cultivar * Treatment_worded, data = Flowers)
 m2 <- glm.nb(Number_Inflorescences ~ Cultivar + Treatment_worded, data = Flowers)
@@ -168,6 +196,9 @@ anova(m4)
 
 AIC(m1, m2, m3, m4)
 # Overall this shows m3 to be preferred, lowest AIC. But not significantly.
+
+Model <- glm.nb(Number_Inflorescences ~ Cultivar, data = Flowers)
+car::Anova(Model , type = "III")
 
 
 # ---- Flower (date) models ----
@@ -185,11 +216,13 @@ anova(m4)
 AIC(m1, m2, m3, m4)
 # Overall this shows m3 to be preferred, lowest AIC. But not significantly.
 
+Model <- glm.nb(Date ~ Cultivar, data = Flowering_date)
+car::Anova(Model , type = "III")
+
 
 # ---- Repotting models ----
 
 # Seed presence
-# Seed pod number
 m1 <- glm.nb(Seeds_present ~ Cultivar * Treatment_worded, data = Repotting)
 m2 <- glm.nb(Seeds_present ~ Cultivar + Treatment_worded, data = Repotting)
 m3 <- glm.nb(Seeds_present ~ Cultivar, data = Repotting)
@@ -201,7 +234,10 @@ anova(m3)
 anova(m4)
 
 AIC(m1, m2, m3, m4)
-# Overall this shows m to be preferred, lowest AIC. But not significantly.
+# Overall this shows m3 to be preferred, lowest AIC. But not significantly.
+
+Model <- glm.nb(Seeds_present ~ Cultivar, data = Repotting)
+car::Anova(Model , type = "III")
 
 # Seed pod number
 m1 <- glm.nb(Seed_pod_abundance ~ Cultivar * Treatment_worded, data = Repotting)
@@ -217,6 +253,9 @@ anova(m4)
 AIC(m1, m2, m3, m4)
 # Overall this shows m to be preferred, lowest AIC. 
 
+Model <- glm.nb(Seeds_pod_abundance ~ , data = Repotting)
+car::Anova(Model , type = "III")
+
 # Seed pod weight
 m1 <- glm.nb(Seed_pod_weight ~ Cultivar * Treatment_worded, data = Repotting)
 m2 <- glm.nb(Seed_pod_weight ~ Cultivar + Treatment_worded, data = Repotting)
@@ -230,6 +269,9 @@ anova(m4)
 
 AIC(m1, m2, m3, m4)
 # Overall this shows m to be preferred, lowest AIC.
+
+Model <- glm.nb(Seeds_pod_weight ~ , data = Repotting)
+car::Anova(Model , type = "III")
 
 # Seed number
 m1 <- glm.nb(Seed_abundance ~ Cultivar * Treatment_worded, data = Repotting)
@@ -245,6 +287,9 @@ anova(m4)
 AIC(m1, m2, m3, m4)
 # Overall this shows m to be preferred, lowest AIC.
 
+Model <- glm.nb(Seed_abundance ~ Cultivar, data = Repotting)
+car::Anova(Model , type = "III")
+
 # Seed weight
 m1 <- glm.nb(Seed_weight ~ Cultivar * Treatment_worded, data = Repotting)
 m2 <- glm.nb(Seed_weight ~ Cultivar + Treatment_worded, data = Repotting)
@@ -259,6 +304,9 @@ anova(m4)
 AIC(m1, m2, m3, m4)
 # Overall this shows m to be preferred, lowest AIC.
 
+Model <- glm.nb(Seed_weight ~ Cultivar, data = Repotting)
+car::Anova(Model , type = "III")
+
 # Seed germination?
 m1 <- glm.nb(Seed_germination ~ Cultivar * Treatment_worded, data = Repotting)
 m2 <- glm.nb(Seed_germination ~ Cultivar + Treatment_worded, data = Repotting)
@@ -272,6 +320,9 @@ anova(m4)
 
 AIC(m1, m2, m3, m4)
 # Overall this shows m to be preferred, lowest AIC.
+
+Model <- glm.nb(Seed_germination ~ , data = Repotting)
+car::Anova(Model , type = "III")
 
 
 # ---- Soil models ----
@@ -290,6 +341,9 @@ anova(m4)
 AIC(m1, m2, m3, m4)
 # Overall this shows m4 to be preferred, lowest AIC.
 
+Model <- glm.nb(Wet ~ Treatment_worded, data = Soil)
+car::Anova(Model , type = "III")
+
 # ECp
 m1 <- glm.nb(ECp ~ Cultivar * Treatment_worded, data = Soil)
 m2 <- glm.nb(ECp ~ Cultivar + Treatment_worded, data = Soil)
@@ -303,6 +357,9 @@ anova(m4)
 
 AIC(m1, m2, m3, m4)
 # Overall this shows m1 to be preferred, lowest AIC. But not significantly.
+
+Model <- glm.nb(ECp ~ Cultivar * Treatment_worded, data = Soil)
+car::Anova(Model , type = "III")
 
 # Eb
 m1 <- glm.nb(Eb ~ Cultivar * Treatment_worded, data = Soil)
@@ -318,6 +375,9 @@ anova(m4)
 AIC(m1, m2, m3, m4)
 # Overall this shows m4 to be preferred, lowest AIC.
 
+Model <- glm.nb(Eb ~ Treatment_worded, data = Soil)
+car::Anova(Model , type = "III")
+
 # ECb
 m1 <- glm.nb(ECb ~ Cultivar * Treatment_worded, data = Soil)
 m2 <- glm.nb(ECb ~ Cultivar + Treatment_worded, data = Soil)
@@ -331,6 +391,9 @@ anova(m4)
 
 AIC(m1, m2, m3, m4)
 # Overall this shows m4 to be preferred, lowest AIC. But not significantly.
+
+Model <- glm.nb(ECb ~ Treatment_worded, data = Soil)
+car::Anova(Model , type = "III")
 
 
 # ---- Observation models ----
@@ -354,6 +417,9 @@ anova(m7)
 
 AIC(m1, m2, m3, m4, m5, m6, m7)
 # Overall this shows m1 to be preferred, lowest AIC.
+
+Model <- glm.nb(Total_arthropods ~ Cultivar * Treatment_worded, data = Observations)
+car::Anova(Model , type = "III")
 
 
 # ---- Combined / other models ----
@@ -387,24 +453,8 @@ anova(m7)
 AIC(m1, m2, m3, m4, m5, m6, m7)
 # Overall this shows m6 to be preferred, lowest AIC.
 
-m1 <- glm.nb(Microliter ~ Number_Inflorescences, data = Combined_data)
-m2 <- glm.nb(Microliter ~ Number_Inflorescences + Cultivar + Treatment_worded, data = Combined_data)
-m3 <- glm.nb(Microliter ~ Number_Inflorescences + Cultivar, data = Combined_data)
-m4 <- glm.nb(Microliter ~ Number_Inflorescences + Treatment_worded, data = Combined_data)
-m5 <- glm.nb(Microliter ~ Average_Inflorescence_Length, data = Combined_data)
-m6 <- glm.nb(Microliter ~ Average_Inflorescence_Length + Cultivar, data = Combined_data)
-m7 <- glm.nb(Microliter ~ Average_Inflorescence_Length + Treatment_worded, data = Combined_data)
-
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
-anova(m5)
-anova(m6)
-anova(m7)
-
-AIC(m1, m2, m3, m4, m5, m6, m7)
-# Overall this shows m6 to be preferred, lowest AIC.
+Model <- glm.nb(Microliter ~ Average_Inflorescence_Length + Cultivar, data = Combined_data)
+car::Anova(Model , type = "III")
 
 m1 <- glm.nb(Microliter ~ Total_arthropods, data = Combined_data)
 m2 <- glm.nb(Microliter ~ Total_arthropods + Cultivar + Treatment_worded, data = Combined_data)
@@ -421,7 +471,9 @@ anova(m5)
 AIC(m1, m2, m3, m4, m5)
 # Overall this shows m3 to be preferred, lowest AIC. But not significant.
 
-# Not yet working properly
+Model <- glm.nb(Microliter ~ Total_arthropods + Cultivar, data = Combined_data)
+car::Anova(Model , type = "III")
+
 m1 <- glm.nb(Number_flowers ~ Cultivar, data = Combined_data)
 m2 <- glm.nb(Number_flowers ~ Cultivar + Treatment_worded, data = Combined_data)
 m3 <- glm.nb(Number_flowers ~ Nodules_present, data = Combined_data)
@@ -441,6 +493,8 @@ anova(m7)
 AIC(m1, m2, m3, m4, m5, m6, m7)
 # Overall this shows m2 to be preferred, lowest AIC.
 
+Model <- glm.nb(Number_flowers ~ Cultivar + Treatment_worded, data = Combined_data)
+car::Anova(Model , type = "III")
 
 
 
