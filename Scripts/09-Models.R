@@ -419,7 +419,7 @@ anova(m4)
 anova(m5)
 
 AIC(m1, m2, m3, m4, m5)
-# Overall this shows m5 to be preferred, lowest AIC. But not significant.
+# Overall this shows m3 to be preferred, lowest AIC. But not significant.
 
 # Not yet working properly
 m1 <- glm.nb(Number_flowers ~ Cultivar, data = Combined_data)
@@ -439,7 +439,7 @@ anova(m6)
 anova(m7)
 
 AIC(m1, m2, m3, m4, m5, m6, m7)
-# Overall this shows m5 to be preferred, lowest AIC.
+# Overall this shows m2 to be preferred, lowest AIC.
 
 
 
