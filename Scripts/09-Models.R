@@ -360,7 +360,8 @@ AIC(m1, m2, m3, m4, m5, m6, m7)
 
 # Combine the data frames into one data frame, using the common column "Plant_ID" to be able to work with all data in one data frame.
 Combined_data <- Phenotype %>%
-  left_join(Nectar, by = "Plant_ID") %>%
+  #  left_join(Nectar, by = "Plant_ID") %>%
+  left_join(Nectar_cleaned, by = "Plant_ID") %>%
   left_join(Flowers, by = "Plant_ID") %>%
   left_join(Repotting, by = "Plant_ID") %>%
   left_join(Observations, by = "Plant_ID") %>%
@@ -384,7 +385,26 @@ anova(m6)
 anova(m7)
 
 AIC(m1, m2, m3, m4, m5, m6, m7)
-# Overall this shows m2 to be preferred, lowest AIC.
+# Overall this shows m6 to be preferred, lowest AIC.
+
+m1 <- glm.nb(Microliter ~ Number_Inflorescences, data = Combined_data)
+m2 <- glm.nb(Microliter ~ Number_Inflorescences + Cultivar + Treatment_worded, data = Combined_data)
+m3 <- glm.nb(Microliter ~ Number_Inflorescences + Cultivar, data = Combined_data)
+m4 <- glm.nb(Microliter ~ Number_Inflorescences + Treatment_worded, data = Combined_data)
+m5 <- glm.nb(Microliter ~ Average_Inflorescence_Length, data = Combined_data)
+m6 <- glm.nb(Microliter ~ Average_Inflorescence_Length + Cultivar, data = Combined_data)
+m7 <- glm.nb(Microliter ~ Average_Inflorescence_Length + Treatment_worded, data = Combined_data)
+
+anova(m1)
+anova(m2)
+anova(m3)
+anova(m4)
+anova(m5)
+anova(m6)
+anova(m7)
+
+AIC(m1, m2, m3, m4, m5, m6, m7)
+# Overall this shows m6 to be preferred, lowest AIC.
 
 m1 <- glm.nb(Microliter ~ Total_arthropods, data = Combined_data)
 m2 <- glm.nb(Microliter ~ Total_arthropods + Cultivar + Treatment_worded, data = Combined_data)
@@ -400,6 +420,45 @@ anova(m5)
 
 AIC(m1, m2, m3, m4, m5)
 # Overall this shows m5 to be preferred, lowest AIC. But not significant.
+
+# Not yet working properly
+m1 <- glm.nb(Number_flowers ~ Cultivar, data = Combined_data)
+m2 <- glm.nb(Number_flowers ~ Cultivar + Treatment_worded, data = Combined_data)
+m3 <- glm.nb(Number_flowers ~ Nodules_present, data = Combined_data)
+m4 <- glm.nb(Number_flowers ~ Treatment_worded, data = Combined_data)
+m5 <- glm.nb(Number_flowers ~ Root_abundance, data = Combined_data)
+m6 <- glm.nb(Number_flowers ~ Seeds_present, data = Combined_data)
+m7 <- glm.nb(Number_flowers ~ Seed_pod_abundance, data = Combined_data)
+
+anova(m1)
+anova(m2)
+anova(m3)
+anova(m4)
+anova(m5)
+anova(m6)
+anova(m7)
+
+AIC(m1, m2, m3, m4, m5, m6, m7)
+# Overall this shows m5 to be preferred, lowest AIC.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
