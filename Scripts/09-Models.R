@@ -343,7 +343,6 @@ m6 <- glmmTMB(Wet ~ Cultivar + Treatment_worded + (1|Block), family = nbinom2, d
 m7 <- glmmTMB(Wet ~ Cultivar + (1|Block), family = nbinom2, data = Soil)
 m8 <- glmmTMB(Wet ~ Treatment_worded + (1|Block), family = nbinom2, data = Soil)
 
-
 anova(m1)
 anova(m2)
 anova(m3)
@@ -361,16 +360,21 @@ m1 <- glm.nb(ECp ~ Cultivar * Treatment_worded, data = Soil)
 m2 <- glm.nb(ECp ~ Cultivar + Treatment_worded, data = Soil)
 m3 <- glm.nb(ECp ~ Cultivar, data = Soil)
 m4 <- glm.nb(ECp ~ Treatment_worded, data = Soil)
+m5 <- glmmTMB(ECp ~ Cultivar * Treatment_worded + (1|Block), family = nbinom2, data = Soil)
+m6 <- glmmTMB(ECp ~ Cultivar + Treatment_worded + (1|Block), family = nbinom2, data = Soil)
+m7 <- glmmTMB(ECp ~ Cultivar + (1|Block), family = nbinom2, data = Soil)
+m8 <- glmmTMB(ECp ~ Treatment_worded + (1|Block), family = nbinom2, data = Soil)
 
 anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+anova(m5, m6, m7, m8)
 
-AIC(m1, m2, m3, m4)
-# Overall this shows m1 to be preferred, lowest AIC. But not significantly.
+AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+# Overall this shows m8 to be preferred, lowest AIC. 
 
-Model <- glm.nb(ECp ~ Cultivar * Treatment_worded, data = Soil)
+Model <- glmmTMB(ECp ~ Treatment_worded + (1|Block), family = nbinom2, data = Soil)
 car::Anova(Model , type = "III")
 
 # Eb
@@ -378,14 +382,19 @@ m1 <- glm.nb(Eb ~ Cultivar * Treatment_worded, data = Soil)
 m2 <- glm.nb(Eb ~ Cultivar + Treatment_worded, data = Soil)
 m3 <- glm.nb(Eb ~ Cultivar, data = Soil)
 m4 <- glm.nb(Eb ~ Treatment_worded, data = Soil)
+m5 <- glmmTMB(Eb ~ Cultivar * Treatment_worded + (1|Block), family = nbinom2, data = Soil)
+m6 <- glmmTMB(Eb ~ Cultivar + Treatment_worded + (1|Block), family = nbinom2, data = Soil)
+m7 <- glmmTMB(Eb ~ Cultivar + (1|Block), family = nbinom2, data = Soil)
+m8 <- glmmTMB(Eb ~ Treatment_worded + (1|Block), family = nbinom2, data = Soil)
 
 anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+anova(m5, m6, m7, m8)
 
-AIC(m1, m2, m3, m4)
-# Overall this shows m4 to be preferred, lowest AIC.
+AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+# Overall this shows m4 to be preferred, lowest AIC. But not significant, however it is the more simple model.
 
 Model <- glm.nb(Eb ~ Treatment_worded, data = Soil)
 car::Anova(Model , type = "III")
@@ -395,14 +404,19 @@ m1 <- glm.nb(ECb ~ Cultivar * Treatment_worded, data = Soil)
 m2 <- glm.nb(ECb ~ Cultivar + Treatment_worded, data = Soil)
 m3 <- glm.nb(ECb ~ Cultivar, data = Soil)
 m4 <- glm.nb(ECb ~ Treatment_worded, data = Soil)
+m5 <- glmmTMB(ECb ~ Cultivar * Treatment_worded + (1|Block), family = nbinom2, data = Soil)
+m6 <- glmmTMB(ECb ~ Cultivar + Treatment_worded + (1|Block), family = nbinom2, data = Soil)
+m7 <- glmmTMB(ECb ~ Cultivar + (1|Block), family = nbinom2, data = Soil)
+m8 <- glmmTMB(ECb ~ Treatment_worded + (1|Block), family = nbinom2, data = Soil)
 
 anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+anova(m5, m6, m7, m8)
 
-AIC(m1, m2, m3, m4)
-# Overall this shows m4 to be preferred, lowest AIC. But not significantly.
+AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+# Overall this shows m8 to be preferred, lowest AIC. But not significantly, so go for the simpler m4.
 
 Model <- glm.nb(ECb ~ Treatment_worded, data = Soil)
 car::Anova(Model , type = "III")
@@ -418,6 +432,10 @@ m4 <- glm.nb(Total_arthropods ~ Treatment_worded, data = Observations)
 m5 <- glm.nb(Total_arthropods ~ Block, data = Observations)
 m6 <- glm.nb(Total_arthropods ~ Block + Cultivar, data = Observations)
 m7 <- glm.nb(Total_arthropods ~ Block + Treatment_worded, data = Observations)
+m8 <- glmmTMB(Total_arthropods ~ Cultivar + (1|Block), family = nbinom2, data = Observations)
+m9 <- glmmTMB(Total_arthropods ~ Cultivar + (1|Time), family = nbinom2, data = Observations)
+m10 <- glmmTMB(Total_arthropods ~ Cultivar + (1|Time) + (1|Block), family = nbinom2, data = Observations)
+m11 <- glmmTMB(Total_arthropods ~ Cultivar + (1|Time) + (1|Block) + (1|Treatment_worded), family = nbinom2, data = Observations)
 
 anova(m1)
 anova(m2)
@@ -426,8 +444,9 @@ anova(m4)
 anova(m5)
 anova(m6)
 anova(m7)
+anova(m8, m9, m10, m11)
 
-AIC(m1, m2, m3, m4, m5, m6, m7)
+AIC(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11)
 # Overall this shows m1 to be preferred, lowest AIC.
 
 Model <- glm.nb(Total_arthropods ~ Cultivar * Treatment_worded, data = Observations)
