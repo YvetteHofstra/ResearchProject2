@@ -114,13 +114,18 @@ m1 <- glm.nb(Number_inflorescences ~ Cultivar * Treatment_worded, data = Phenoty
 m2 <- glm.nb(Number_inflorescences ~ Cultivar + Treatment_worded, data = Phenotype)
 m3 <- glm.nb(Number_inflorescences ~ Cultivar, data = Phenotype)
 m4 <- glm.nb(Number_inflorescences ~ Treatment_worded, data = Phenotype)
+m5 <- glmmTMB(Number_inflorescences ~ Cultivar * Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
+m6 <- glmmTMB(Number_inflorescences ~ Cultivar + Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
+m7 <- glmmTMB(Number_inflorescences ~ Cultivar + (1|Block), family = nbinom2, data = Phenotype)
+m8 <- glmmTMB(Number_inflorescences ~ Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
 
 anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+anova(m5, m6, m7, m8) # m7 is best of these
 
-AIC(m1, m2, m3, m4)
+AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 # Overall this shows m3 to be preferred, lowest AIC. No significant difference (AIC <2) but it is also the most parsimonious. 
 
 Model <- glm.nb(Number_inflorescences ~ Cultivar, data = Phenotype)
@@ -333,14 +338,20 @@ m1 <- glm.nb(Wet ~ Cultivar * Treatment_worded, data = Soil)
 m2 <- glm.nb(Wet ~ Cultivar + Treatment_worded, data = Soil)
 m3 <- glm.nb(Wet ~ Cultivar, data = Soil)
 m4 <- glm.nb(Wet ~ Treatment_worded, data = Soil)
+m5 <- glmmTMB(Wet ~ Cultivar * Treatment_worded + (1|Block), family = nbinom2, data = Soil)
+m6 <- glmmTMB(Wet ~ Cultivar + Treatment_worded + (1|Block), family = nbinom2, data = Soil)
+m7 <- glmmTMB(Wet ~ Cultivar + (1|Block), family = nbinom2, data = Soil)
+m8 <- glmmTMB(Wet ~ Treatment_worded + (1|Block), family = nbinom2, data = Soil)
+
 
 anova(m1)
 anova(m2)
 anova(m3)
 anova(m4)
+anova(m5, m6, m7, m8) # m5 is preferred, lowest AIC. But not significant from m6
 
-AIC(m1, m2, m3, m4)
-# Overall this shows m4 to be preferred, lowest AIC.
+AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+# Overall this shows m8 to be preferred, lowest AIC. But not significant, so go to most simple one: m4
 
 Model <- glm.nb(Wet ~ Treatment_worded, data = Soil)
 car::Anova(Model , type = "III")
