@@ -131,6 +131,8 @@ anova(m4)
 # After the first round, the flowering date was noted for each plant, add that data sheet and make some exploratory graphs
 Flowering_date <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1460555223&single=true&output=csv") 
 
+State_of_plants <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1378722631&single=true&output=csv")
+
 # Show the type of data R will treat it as (numeric, character, factor, etc.)
 str(Flowering_date)
 
@@ -178,24 +180,54 @@ ggplot(Flowering_date, aes(x = Treatment_worded, y = Date, fill = Treatment_word
 # ggsave("Graphs/Flowering_date_as_date_itself.png", width = 8, height = 6, dpi = 300)
 
 # As seen, the date is not looking nice in these plots. Change to as.date
-Flowering_date$Date <- as.Date(Flowering_date$Date)
+Flowering_date$Date <- as.Date(Flowering_date$Date,
+                               format = "%d-%m-%Y")
+str(Flowering_date)
+
 
 Dates <- data.frame(aes(Flowering_date),
-  Date = as.Date("06-05-2026", "13-05-2026", "20-05-2026", "22-05-2026", "01-06-2026", "03-06-2026", "09-06-2026", "12-06-2026", "17-06-2026"))
+                    Date = as.Date("06-05-2026", "13-05-2026", "20-05-2026", "22-05-2026", "01-06-2026", "03-06-2026", "09-06-2026", "12-06-2026", "17-06-2026"))
 
-ggplot(Date, aes(x = Treatment_worded, y = Date, fill = Treatment_worded)) +
-  geom_boxplot() +
+ggplot(Flowering_date,
+       aes(x = Date,
+           y = Plant_ID,
+           color = Treatment_worded)) +
+  geom_point(size = 3) +
   facet_wrap(~ Cultivar) +
-  labs(title = "Flowering timing of Medicago sativa",
-       x = "Treatment",
-       y = "Flowering since",
-       fill = "Treatment") +
+  labs(title = "Flowering date of individual Medicago sativa plants",
+       x = "Date",
+       y = "Plant ID",
+       color = "Treatment") +
   theme_minimal()
+# Save
+# ggsave("Graphs/Flowering_date_per_plant.png", width = 8, height = 6, dpi = 300)
 
-qplot(Flowering_date, aes(x=Date, y=Cultivar, color=Treatment_worded))
+State_of_plants$Flowers <- as.numeric(State_of_plants$Flowers)
+State_of_plants$Treatment <- as.factor(State_of_plants$Treatment)
 
+Flower_summary <- State_of_plants |>
+  group_by(Date, Cultivar, Treatment, Treatment_worded) |>
+  summarise(
+    Prop_flowering = mean(Flowers),
+    .groups = "drop"
+  )
 
-
+ggplot(Flower_summary,
+       aes(x = Date,
+           y = Prop_flowering,
+           color = Treatment_worded,
+           group = Treatment_worded)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  facet_wrap(~ Cultivar) +
+  labs(
+    title = "Proportion of flowering plants through time",
+    x = "Date",
+    y = "Proportion flowering"
+  ) +
+  theme_minimal()
+# Save
+# ggsave("Graphs/Proportion_flowering_through_time.png", width = 8, height = 6, dpi = 300)
 
 
 
