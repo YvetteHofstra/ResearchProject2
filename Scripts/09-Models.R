@@ -40,7 +40,7 @@ Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr
 
 Observations <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNix7qqZS7cB-KkXmk4Yu7XNvI8uNFhS_ZCfTGwVIziLeXCzH-VlHzEzrndxrzLGgWUj-ssOHRmORV/pub?gid=1102638602&single=true&output=csv")
 
-Soil <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTR4kOxATM525UmU7895FgLFgjHlL2RJ_Cgtb5fepWR-vRVZpwzLF3OIc4ZtvtTDQge1iUkyZY5W8Se/pub?gid=1854960858&single=true&output=csv") 
+Soil <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=224800747&single=true&output=csv") 
 
 # Replace all NAs in the entire data frame with 0
 Observations <- Observations |>
@@ -53,6 +53,7 @@ str(Flowers)
 str(Flowering_date)
 str(Repotting)
 str(Observations)
+str(Soil)
 
 # Make numeric instead of integer
 Phenotype$Number_inflorescences <- as.numeric(Phenotype$Number_inflorescences)
@@ -83,10 +84,10 @@ m1 <- glm.nb(Number_flowers ~ Cultivar * Treatment_worded, data = Phenotype)
 m2 <- glm.nb(Number_flowers ~ Cultivar + Treatment_worded, data = Phenotype)
 m3 <- glm.nb(Number_flowers ~ Cultivar, data = Phenotype)
 m4 <- glm.nb(Number_flowers ~ Treatment_worded, data = Phenotype)
-m5 <- glmmTMB(Number_flowers ~ Cultivar * Treatment_worded, family = nbinom2, data = Phenotype)
-m6 <- glmmTMB(Number_flowers ~ Cultivar + Treatment_worded, family = nbinom2, data = Phenotype)
-m7 <- glmmTMB(Number_flowers ~ Cultivar, family = nbinom2, data = Phenotype)
-m8 <- glmmTMB(Number_flowers ~ Treatment_worded, family = nbinom2, data = Phenotype)
+m5 <- glmmTMB(Number_flowers ~ Cultivar * Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
+m6 <- glmmTMB(Number_flowers ~ Cultivar + Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
+m7 <- glmmTMB(Number_flowers ~ Cultivar + (1|Block), family = nbinom2, data = Phenotype)
+m8 <- glmmTMB(Number_flowers ~ Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
 
 anova(m1)
 anova(m2)
@@ -95,7 +96,7 @@ anova(m4)
 anova(m5, m6, m7, m8) # m7 is best of these
 
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
-# Overall this shows m3 and m7 to be preferred, lowest AIC. Both exact same AIC, also not significant from m2. Can just use the glm.nb as there are no random factors here.
+# Overall this shows m3 to be preferred, lowest AIC. But not significant. Can just use the glm.nb as the random effect does not significantly improve the model.
 
 Model <- glm.nb(Number_flowers ~ Cultivar, data = Phenotype)
 car::Anova(Model , type = "III")
