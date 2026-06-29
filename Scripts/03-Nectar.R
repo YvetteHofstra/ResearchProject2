@@ -204,6 +204,71 @@ ggplot(Nectar_cleaned,
        fill = "Treatment") +
   theme_minimal()
 
+# Now we can work with seed abundance and weight rather than absence/presence of seed pods
+
+# Not nice...
+ggplot(Nectar, aes(fill = Treatment_worded, x = Seed_abundance)) +
+  geom_bar() +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Seed abundance of Medicago sativa",
+       x = "Seed abundance",
+       y = "Plants (#)",
+       fill = "Treatment") +
+  theme_minimal()
+
+ggplot(Nectar,
+       aes(x = Cultivar,
+           y = Seed_abundance,
+           fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(aes(color = Treatment_worded),
+              position = position_jitterdodge(
+                jitter.width = 0.1,
+                dodge.width = 0.75
+              ),
+              size = 2) +
+  labs(title = "Seed production of Medicago sativa",
+       x = "Cultivar",
+       y = "Seeds per plant",
+       fill = "Treatment",
+       color = "Treatment") +
+  theme_minimal()
+
+# Now with seed weight
+ggplot(Nectar,
+       aes(x = Seed_abundance,
+           y = Seed_weight,
+           color = Treatment_worded)) +
+  geom_point(size = 2.5) +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Relationship between seed number and seed weight",
+       x = "Seeds per plant",
+       y = "Seed weight (g)") +
+  theme_minimal()
+
+# With seed pods rather than seeds
+ggplot(Nectar,
+       aes(x = Seed_pod_abundance,
+           y = Seed_abundance,
+           color = Treatment_worded)) +
+  geom_point(size = 2.5) +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~ Cultivar) +
+  labs(title = "Seed production per seed pod",
+       x = "Seed pods per plant",
+       y = "Seeds per plant") +
+  theme_minimal()
+
+
+
+
+
+
+
+
+
+
 
 
 
