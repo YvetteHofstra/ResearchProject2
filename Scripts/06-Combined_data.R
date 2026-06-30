@@ -9,7 +9,6 @@ rm(list = ls())
 # Load the packages that are needed for this project
 library(tidyverse) # Includes ggplot2, dplyr, etc. can also add them separately 
 # load the required packages
-library(tidyverse)
 library(ggplot2)
 library(dplyr)
 library(chemodiv)
@@ -38,6 +37,8 @@ Flowers <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN
 Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1067776784&single=true&output=csv")
 
 Observations <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNix7qqZS7cB-KkXmk4Yu7XNvI8uNFhS_ZCfTGwVIziLeXCzH-VlHzEzrndxrzLGgWUj-ssOHRmORV/pub?gid=1102638602&single=true&output=csv")
+
+Observations_2 <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNix7qqZS7cB-KkXmk4Yu7XNvI8uNFhS_ZCfTGwVIziLeXCzH-VlHzEzrndxrzLGgWUj-ssOHRmORV/pub?gid=2034963164&single=true&output=csv")
 
 Soil <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTR4kOxATM525UmU7895FgLFgjHlL2RJ_Cgtb5fepWR-vRVZpwzLF3OIc4ZtvtTDQge1iUkyZY5W8Se/pub?gid=1854960858&single=true&output=csv")
 
@@ -134,7 +135,73 @@ ggplot(Combined_data, aes(x = Filled_until_mm, y = Number_Inflorescences, color 
 # Save
 # ggsave("Graphs/Nectar_and_inflorescences_scatterplot_line_no_SE_treatment.png", width = 8, height = 6, dpi = 300)
 
-# Do the same for # flowers
+# Other way, now with microliter
+ggplot(Combined_data, aes(x = Number_Inflorescences, y = Microliter, color = Treatment_worded)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(y = "Nectar (µL)",
+       x = "Number of inflorescences",
+       color = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Nectar_and_inflorescences_treatment_lines.png", width = 12, height = 8, dpi = 300)
+
+# Other way around for the axes + now with microliter
+ggplot(Combined_data, aes(x = Microliter, y = Number_Inflorescences, color = Treatment_worded)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Nectar (µL)",
+       y = "Number of inflorescences",
+       color = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Nectar_with_inflorescences_treatment_lines.png", width = 12, height = 8, dpi = 300)
+
+# Remove plants that still could have more nectar extracted
+Nectar_cleaned <- Nectar %>%
+  filter(!Plant_ID %in% c("A76", "V64", "V67", "V68", "V71", "V73", "C89", "C85", "C64", "C68", "C73", "C76", "C62"))
+
+Combined_data_nectar <- Nectar_cleaned %>%
+  left_join(Combined_data, by = "Plant_ID")
+
+names(Combined_data_nectar)
+
+ggplot(Combined_data_nectar, aes(x = Number_Inflorescences, y = Microliter.y, color = Treatment_worded.y)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(y = "Nectar (µL)",
+       x = "Number of inflorescences",
+       color = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Filtered_nectar_with_inflorescences_treatment_lines.png", width = 12, height = 8, dpi = 300)
+
+model <- lm(Microliter.y ~ Number_Inflorescences * Treatment_worded.y,
+            data = Combined_data_nectar)
+anova(model)
+
+# Do it for # flowers
 ggplot(Combined_data, aes(x = Number_flowers, y = Filled_until_mm)) +
   geom_point() +
   labs(title = "Medicago sativa flowers x nectar",
@@ -364,6 +431,90 @@ ggplot(Combined_data, aes(x = Total_arthropods, y = Filled_until_mm, color = Tre
   theme_minimal()
 # Save
 # ggsave("Graphs/Total_arthropods_with_nectar_scatterplot_line_no_SE_treatment.png", width = 8, height = 6, dpi = 300)
+
+# Work with april round and arthropod total
+Observations_arthropods <- Observations |>
+  pivot_longer(
+    cols = c(Bibio_marci,
+             Bombus_pascuorum,
+             Empis_tessellata,
+             Larinioides_cornutus),
+    names_to = "Visitor",
+    values_to = "Count"
+  )
+
+table(Observations_arthropods$Visitor)
+names(Observations_arthropods)
+
+arth_summary <- Observations_arthropods |>
+  group_by(Cultivar, Visitor, Plant_ID) |>
+  summarise(Count = sum(Count), .groups = "drop")
+
+names(arth_summary)
+
+Combined_data_visits <- arth_summary %>%
+  left_join(Combined_data, by = "Plant_ID")
+names(Combined_data_visits)
+
+ggplot(Combined_data_visits, aes(x = Microliter, y = Total_arthropods, color = Treatment_worded.y)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Nectar (µL)",
+       y = "Total arthropod visits",
+       color = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Nectar_with_visitors_treatment_lines.png", width = 12, height = 8, dpi = 300)
+
+ggplot(Combined_data_visits, aes(y = Microliter, x = Total_arthropods, color = Treatment_worded.y)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(y = "Nectar (µL)",
+       x = "Total arthropod visits",
+       color = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# ggsave("Graphs/Nectar_and_visitors_treatment_lines.png", width = 12, height = 8, dpi = 300)
+
+model_visits <- lm(Total_arthropods ~ Microliter * Treatment_worded,
+                   data = Combined_data_visits)
+
+anova(model_visits)
+
+# Now visitation with inflorescences
+ggplot(Combined_data_visits, aes(y = Number_Inflorescences, x = Total_arthropods, color = Treatment_worded.y)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(y = "Number of inflorescences",
+       x = "Total arthropod visits",
+       color = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# ggsave("Graphs/Inflorescences_and_visitors_treatment_lines.png", width = 12, height = 8, dpi = 300)
+
+model_visits <- lm(Total_arthropods ~ Number_Inflorescences * Treatment_worded,
+                   data = Combined_data_visits)
+
+anova(model_visits)
 
 # Also try to see cultivar differences
 ggplot(Combined_data, aes(x = Total_arthropods, y = Filled_until_mm, color = Cultivar)) +
