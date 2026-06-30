@@ -70,10 +70,17 @@ ggplot(Soil_1, aes(x = Cultivar, y = ECp, fill = Treatment_worded)) +
   labs(x = "Cultivar",
        y = "ECp (mS⋅m⁻¹)",
        fill = "Treatment") +
-  theme_minimal() 
-nobs(Soil)
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.title = element_text(size = 12, face = "bold")
+  )
+
+nobs(Soil_1)
 # Save
-# ggsave("Graphs/Soil_salinity_1.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Soil_salinity_1.png", width = 12, height = 8, dpi = 300)
 # ggsave("Graphs/Soil_ECp_1_presentation.png",width = 11,height = 8,dpi = 600,units = "in")
 
 ggplot(Soil_2, aes(x = Cultivar, y = ECp, fill = Treatment_worded)) +
@@ -81,11 +88,16 @@ ggplot(Soil_2, aes(x = Cultivar, y = ECp, fill = Treatment_worded)) +
   labs(x = "Cultivar",
        y = "ECp (mS⋅m⁻¹)",
        fill = "Treatment") +
-  theme_minimal() 
-nobs(Soil)
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.title = element_text(size = 12, face = "bold")
+  ) 
 # Save
-# ggsave("Graphs/Soil_salinity_2.png", width = 8, height = 6, dpi = 300)
-# ggsave("Graphs/Soil_ECp_2_presentation.png",width = 11,height = 8,dpi = 600,units = "in")
+# ggsave("Graphs/Soil_salinity_2.png", width = 12, height = 8, dpi = 300)
+# ggsave("Graphs/Soil_ECp_2_presentation.png",width = 8,height = 8,dpi = 300,units = "in")
 
 ggplot(Soil, aes(x = Cultivar, y = ECb, fill = Treatment_worded)) +
   geom_boxplot() +
