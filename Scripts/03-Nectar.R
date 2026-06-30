@@ -18,6 +18,8 @@ library(factoextra)
 library(ggpubr)
 library(purrr)
 library(tibble)
+library(lme4)
+library(lmerTest)
 
 readr::read_csv # This makes a tibble instead of table, for every variable it stores what the type of variable is. It doesn't just stop at the length it can print, which is what table does.
 
@@ -145,7 +147,7 @@ ggplot(Nectar,
               size = 2) +
   labs(title = "Nectar per treatment of Medicago sativa",
        x = "Cultivar",
-       y = "Nectar (microliter)",
+       y = "Nectar (µL)",
        fill = "Treatment") +
   theme_minimal()
 
@@ -204,6 +206,35 @@ ggplot(Nectar_cleaned,
        fill = "Treatment") +
   theme_minimal()
 
+ggplot(Nectar_cleaned,aes(x = Cultivar, y = Microliter, fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(color = "black",
+              position = position_jitterdodge(
+                jitter.width = 0.15,
+                dodge.width = 0.75),
+              size = 2) +
+  labs(x = "Cultivar",
+       y = "Nectar (µL)",
+       fill = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Nectar_microliter_presentation.png", width = 12, height = 8, dpi = 300)
+
+# Model
+model <- lm(Microliter ~ Treatment_worded * Cultivar,
+            data = Nectar_cleaned)
+
+anova(model)
+summary(model)
+
+
 # Now we can work with seed abundance and weight rather than absence/presence of seed pods
 
 # Not nice...
@@ -234,6 +265,32 @@ ggplot(Nectar,
        color = "Treatment") +
   theme_minimal()
 
+# Similar plot as the nectar volume one
+ggplot(Nectar, aes(x = Cultivar,
+                           y = Seed_abundance,
+                           fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(aes(group = Treatment_worded),
+              color = "black",
+              position = position_jitterdodge(
+                jitter.width = 0.15,
+                dodge.width = 0.75),
+              size = 2) +
+  labs(x = "Cultivar",
+       y = "Number of seeds",
+       fill = "Treatment") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold"),
+    strip.text = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Seed_abundance_presentation.png", width = 12, height = 8, dpi = 300)
+
 # Now with seed weight
 ggplot(Nectar,
        aes(x = Seed_abundance,
@@ -247,20 +304,56 @@ ggplot(Nectar,
        y = "Seed weight (g)") +
   theme_minimal()
 
+ggplot(Nectar, aes(x = Cultivar,
+                   y = Seed_weight,
+                   fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(aes(group = Treatment_worded),
+              color = "black",
+              position = position_jitterdodge(
+                jitter.width = 0.15,
+                dodge.width = 0.75),
+              size = 2) +
+  labs(x = "Cultivar",
+       y = "Seed weight (g)",
+       fill = "Treatment") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold"),
+    strip.text = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Seed_weight_presentation.png", width = 12, height = 8, dpi = 300)
+
 # With seed pods rather than seeds
-ggplot(Nectar,
-       aes(x = Seed_pod_abundance,
-           y = Seed_abundance,
-           color = Treatment_worded)) +
-  geom_point(size = 2.5) +
-  geom_smooth(method = "lm", se = FALSE) +
-  facet_wrap(~ Cultivar) +
-  labs(title = "Seed production per seed pod",
-       x = "Seed pods per plant",
-       y = "Seeds per plant") +
-  theme_minimal()
-
-
+ggplot(Nectar, aes(x = Cultivar,
+                   y = Seed_pod_abundance,
+                   fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(aes(group = Treatment_worded),
+              color = "black",
+              position = position_jitterdodge(
+                jitter.width = 0.15,
+                dodge.width = 0.75),
+              size = 2) +
+  labs(x = "Cultivar",
+       y = "Number of seed pods",
+       fill = "Treatment") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold"),
+    strip.text = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Seed_pods_plot.png", width = 12, height = 8, dpi = 300)
 
 
 
