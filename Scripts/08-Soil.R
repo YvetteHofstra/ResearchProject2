@@ -75,7 +75,8 @@ ggplot(Soil_1, aes(x = Cultivar, y = ECp, fill = Treatment_worded)) +
     axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
     axis.text.y = element_text(size = 12),
     axis.title = element_text(size = 14, face = "bold"),
-    legend.title = element_text(size = 12, face = "bold")
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
   )
 
 nobs(Soil_1)
@@ -93,7 +94,8 @@ ggplot(Soil_2, aes(x = Cultivar, y = ECp, fill = Treatment_worded)) +
     axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
     axis.text.y = element_text(size = 12),
     axis.title = element_text(size = 14, face = "bold"),
-    legend.title = element_text(size = 12, face = "bold")
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
   ) 
 # Save
 # ggsave("Graphs/Soil_salinity_2.png", width = 12, height = 8, dpi = 300)
