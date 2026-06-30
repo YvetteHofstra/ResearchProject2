@@ -129,6 +129,23 @@ ggplot(Phenotype, aes(x = Cultivar, y = Number_flowers, fill = Treatment_worded)
 # Save
 # ggsave("Graphs/Cultivar_with_flowers_divided_by_treatment_boxplot.png", width = 8, height = 6, dpi = 300)
 
+ggplot(Phenotype, aes(x = Cultivar, y = Number_flowers, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(x = "Cultivar",
+       y = "Number of flowers",
+       fill = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Number_of_flowers_presentation.png", width = 12, height = 8, dpi = 300)
+
+
 # Check if it makes sense to add significance to the plot 
 model_flowers_nb <- glm.nb(Number_flowers ~ Cultivar * Treatment_worded,
                            data = Phenotype)
@@ -149,6 +166,21 @@ ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences, fill = Treatment_
   theme_minimal()
 # Save
 # ggsave("Graphs/Cultivar_with_inflorescences_divided_by_treatment_boxplot.png", width = 8, height = 6, dpi = 300)
+ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(x = "Cultivar",
+       y = "Number of inflorescences",
+       fill = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Number_of_inflorescences_presentation.png", width = 12, height = 8, dpi = 300)
 
 model_inflorescence_nb <- glm.nb(Number_inflorescences ~ Cultivar * Treatment_worded,
                                  data = Phenotype)
