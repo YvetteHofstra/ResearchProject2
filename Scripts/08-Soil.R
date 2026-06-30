@@ -51,7 +51,7 @@ readr::read_csv # This makes a tibble instead of table, for every variable it st
 
 # Load the data you want to use
 # Load the data file from google drive 
-Soil <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTR4kOxATM525UmU7895FgLFgjHlL2RJ_Cgtb5fepWR-vRVZpwzLF3OIc4ZtvtTDQge1iUkyZY5W8Se/pub?gid=1854960858&single=true&output=csv") 
+Soil <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=224800747&single=true&output=csv") 
 
 # Show the type of data R will treat it as (numeric, character, factor, etc.)
 str(Soil)
@@ -60,8 +60,12 @@ str(Soil)
 Soil$ECp <- as.numeric(Soil$ECp)
 Soil$ECb <- as.numeric(Soil$ECb)
 
+# Add only the second time or first time of soil measurements to the plot
+Soil_1 <- Soil %>% filter(Time_point == 1)
+Soil_2 <- Soil %>% filter(Time_point == 2)
+
 # Make an exploratory graph
-ggplot(Soil, aes(x = Cultivar, y = ECp, fill = Treatment_worded)) +
+ggplot(Soil_1, aes(x = Cultivar, y = ECp, fill = Treatment_worded)) +
   geom_boxplot() +
   labs(x = "Cultivar",
        y = "ECp (mS⋅m⁻¹)",
@@ -69,8 +73,19 @@ ggplot(Soil, aes(x = Cultivar, y = ECp, fill = Treatment_worded)) +
   theme_minimal() 
 nobs(Soil)
 # Save
-# ggsave("Graphs/Soil_salinity.png", width = 8, height = 6, dpi = 300)
-# ggsave("Graphs/Soil_ECp_presentation.png",width = 11,height = 8,dpi = 600,units = "in")
+# ggsave("Graphs/Soil_salinity_1.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Soil_ECp_1_presentation.png",width = 11,height = 8,dpi = 600,units = "in")
+
+ggplot(Soil_2, aes(x = Cultivar, y = ECp, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(x = "Cultivar",
+       y = "ECp (mS⋅m⁻¹)",
+       fill = "Treatment") +
+  theme_minimal() 
+nobs(Soil)
+# Save
+# ggsave("Graphs/Soil_salinity_2.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Soil_ECp_2_presentation.png",width = 11,height = 8,dpi = 600,units = "in")
 
 ggplot(Soil, aes(x = Cultivar, y = ECb, fill = Treatment_worded)) +
   geom_boxplot() +
