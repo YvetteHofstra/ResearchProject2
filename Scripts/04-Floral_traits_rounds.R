@@ -229,7 +229,22 @@ ggplot(Flower_summary,
 # Save
 # ggsave("Graphs/Proportion_flowering_through_time.png", width = 8, height = 6, dpi = 300)
 
-
+# Make a plot with inflorescence length
+ggplot(Flowers, aes(x = Cultivar, y = Average_Inflorescence_Length, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(x = "Cultivar",
+       y = "Inflorescence length (mm)",
+       fill = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Avg_inflorescence_length_presentation.png", width = 12, height = 8, dpi = 300)
 
 
 
