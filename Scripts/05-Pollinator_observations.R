@@ -183,14 +183,13 @@ ggplot(arth_plant, aes(x = Cultivar,
 # Save
 # ggsave("Graphs/Arthropods_Round_one_presentation.png", width = 12, height = 8, dpi = 300)
 
+# Now we can filter the data to only include flowering plants and replace NA with 0 for arthropod counts after filtering flowering plants. This is important because we only want to consider arthropod visits to flowering plants, and any NA values in the arthropod counts should be treated as zero visits.
 Observations_clean <- Observations_2 %>%
   filter(Flowering == 1)
 
 arth_cols <- c(
-  "Apis_mellifera", "Bibio_marci", "Bombus_pascuorum",
-  "Bombus_terrestris", "Closterotomus_norwegicus",
-  "Empis_tessellata", "Larinioides_cornutus",
-  "Oedemera", "Stenichneumon_culpator", "Syrphidae"
+  "Anthomyiidae",	"Apis_mellifera",	"Bibio_marci",	"Bombus_pascuorum", "Bombus_terrestris", "Closterotomus_norwegicus", "Cynomya_mortuorum", "Empis_tessellata", "Larinioides_cornutus",
+  "Oedemera",	"Pollenia",	"Pseudovadonia_livida",	"Rhagonycha_fulva",	"Sarcophagidae",	"Stenichneumon_culpator",	"Syrphidae",	"Tetanocera",	"Zygaena_filipendulae"
 )
 
 Observations_clean <- Observations_clean %>%
@@ -237,20 +236,28 @@ ggplot(arth_summary,
   ) +
   scale_fill_discrete(
     labels = c(
+      "Anthomyiidae",
       expression(italic("Apis mellifera")),
       expression(italic("Bibio marci")),
       expression(italic("Bombus pascuorum")),
       expression(italic("Bombus terrestris")),
       expression(italic("Closterotomus norwegicus")),
+      expression(italic("Cynomya mortuorum")),
       expression(italic("Empis tessellata")),
       expression(italic("Larinioides cornutus")),
       expression(italic("Oedemera")),
+      "Pollenia",
+      expression(italic("Pseudovadonia livida")),
+      expression(italic("Rhagonycha fulva")),
+      "Sarcophagidae",
       expression(italic("Stenichneumon culpator")),
-      "Syrphidae"
-    )
+      "Syrphidae",
+      "Tetanocera",
+      expression(italic("Zygaena filipendulae"))
   )
+)
 # Save
-# ggsave("Graphs/Arthropods_Round_two_presentation.png", width = 12, height = 8, dpi = 300)
+# ggsave("Graphs/Arthropods_Round_two_data.png", width = 12, height = 8, dpi = 300)
 
 ggplot(arth_summary, aes(x = Cultivar,
                        y = Count,
@@ -273,7 +280,7 @@ ggplot(arth_summary, aes(x = Cultivar,
     legend.title = element_text(size = 14, face = "bold")
   )
 # Save
-# ggsave("Graphs/Arthropods_Round_two.png", width = 12, height = 8, dpi = 300)
+# ggsave("Graphs/Arthropods_Round_two_treatment_cultivar.png", width = 12, height = 8, dpi = 300)
 
 
 
