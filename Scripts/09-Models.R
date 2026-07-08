@@ -36,7 +36,7 @@ Flowers <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN
 
 Flowering_date <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1460555223&single=true&output=csv") 
 
-Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1067776784&single=true&output=csv")
+Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=217767211&single=true&output=csv")
 
 Observations <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNix7qqZS7cB-KkXmk4Yu7XNvI8uNFhS_ZCfTGwVIziLeXCzH-VlHzEzrndxrzLGgWUj-ssOHRmORV/pub?gid=1102638602&single=true&output=csv")
 
@@ -262,23 +262,6 @@ AIC(m1, m2, m3, m4)
 Model <- glm.nb(Seeds_pod_abundance ~ , data = Repotting)
 car::Anova(Model , type = "III")
 
-# Seed pod weight
-m1 <- glm.nb(Seed_pod_weight ~ Cultivar * Treatment_worded, data = Repotting)
-m2 <- glm.nb(Seed_pod_weight ~ Cultivar + Treatment_worded, data = Repotting)
-m3 <- glm.nb(Seed_pod_weight ~ Cultivar, data = Repotting)
-m4 <- glm.nb(Seed_pod_weight ~ Treatment_worded, data = Repotting)
-
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
-
-AIC(m1, m2, m3, m4)
-# Overall this shows m to be preferred, lowest AIC.
-
-Model <- glm.nb(Seeds_pod_weight ~ , data = Repotting)
-car::Anova(Model , type = "III")
-
 # Seed number
 m1 <- glm.nb(Seed_abundance ~ Cultivar * Treatment_worded, data = Repotting)
 m2 <- glm.nb(Seed_abundance ~ Cultivar + Treatment_worded, data = Repotting)
@@ -291,7 +274,7 @@ anova(m3)
 anova(m4)
 
 AIC(m1, m2, m3, m4)
-# Overall this shows m to be preferred, lowest AIC.
+# Overall this shows m3 to be preferred, lowest AIC. But, not significant.
 
 Model <- glm.nb(Seed_abundance ~ Cultivar, data = Repotting)
 car::Anova(Model , type = "III")
@@ -308,7 +291,7 @@ anova(m3)
 anova(m4)
 
 AIC(m1, m2, m3, m4)
-# Overall this shows m to be preferred, lowest AIC.
+# Overall this shows m4 to be preferred, lowest AIC.
 
 Model <- glm.nb(Seed_weight ~ Cultivar, data = Repotting)
 car::Anova(Model , type = "III")
