@@ -419,6 +419,8 @@ m8 <- glmmTMB(Total_arthropods ~ Cultivar + (1|Block), family = nbinom2, data = 
 m9 <- glmmTMB(Total_arthropods ~ Cultivar + (1|Time), family = nbinom2, data = Observations)
 m10 <- glmmTMB(Total_arthropods ~ Cultivar + (1|Time) + (1|Block), family = nbinom2, data = Observations)
 m11 <- glmmTMB(Total_arthropods ~ Cultivar + (1|Time) + (1|Block) + (1|Treatment_worded), family = nbinom2, data = Observations)
+m12 <- glmmTMB(Total_arthropods ~ Cultivar + (1|Plant_ID), family = nbinom2, data = Observations)
+m13 <- glmmTMB(Total_arthropods ~ Plant_ID, family = nbinom2, data = Observations)
 
 anova(m1)
 anova(m2)
@@ -427,12 +429,12 @@ anova(m4)
 anova(m5)
 anova(m6)
 anova(m7)
-anova(m8, m9, m10, m11)
+anova(m8, m9, m10, m11, m12, m13)
 
-AIC(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11)
-# Overall this shows m1 to be preferred, lowest AIC.
+AIC(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13)
+# Overall this shows m12 to be preferred, lowest AIC.
 
-Model <- glm.nb(Total_arthropods ~ Cultivar * Treatment_worded, data = Observations)
+Model <- glmmTMB(Total_arthropods ~ Cultivar + (1|Plant_ID), family = nbinom2, data = Observations)
 car::Anova(Model , type = "III")
 
 
