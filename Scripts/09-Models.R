@@ -1,28 +1,33 @@
-# Restore the correct versions of the used packages
-renv::restore() 
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#               Research Project 2, Data Analysis
+#       The impact of salt tolerance on pollinator behaviour:
+#      effects of salinity on floral traits of Medicago sativa
+#                         Year: 2026
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+# ---- Before staring ----
 
 # Clean the environment to avoid conflicts with other projects or names
 rm(list = ls())
 
+# Restore the correct versions of the used packages
+renv::restore() 
+
 # When a package is used for the first time, also add to lockfile
 # renv::snapshot() # This shows a new library downloaded in manuscript
+
 # Load the packages that are needed for this project
-library(tidyverse) # Includes ggplot2, dplyr, etc. can also add them separately 
-# load the required packages
-library(tidyverse)
-library(ggplot2)
-library(glmmTMB)
-library(gtsummary)
-library(dplyr)
+library(car)
 library(chemodiv)
 library(corrr)
+library(emmeans)
 library(factoextra)
-library(ggpubr)
-library(purrr)
-library(tibble)
+library(glmmTMB)
+library(gtsummary)
 library(MASS)
 library(multcomp)
-library(emmeans)
+library(tidyverse) # Includes ggplot2, dplyr, etc. can also add them separately
 
 readr::read_csv # This makes a tibble instead of a table, for every variable it stores what the type of variable is. It doesn't just stop at the length it can print, which is what table does.
 
@@ -77,37 +82,56 @@ Repotting$Seeds_present <- factor(
 )
 
 
+# ---- Use for model significance testing ----
+
+# For models without interactions (Type II LRT)
+# Anova(best_model, type = "II")
+
+# For models with interactions (Type III LRT)
+# Anova(best_model, type = "III")
+
+# When more than 2 levels, use emmeans to get pairwise comparisons
+# emmeans(best_model, pairwise ~ Cultivar, type = "response")
+
+# When there is an interaction
+# emmeans(best_model, pairwise ~ Cultivar | Treatment_worded)
+
+
 # ---- Phenotype models ----
 
-# Is the number of flowers significantly different between cultivars
-m1 <- glm.nb(Number_flowers ~ Cultivar * Treatment_worded, data = Phenotype)
-m2 <- glm.nb(Number_flowers ~ Cultivar + Treatment_worded, data = Phenotype)
-m3 <- glm.nb(Number_flowers ~ Cultivar, data = Phenotype)
-m4 <- glm.nb(Number_flowers ~ Treatment_worded, data = Phenotype)
-m5 <- glmmTMB(Number_flowers ~ Cultivar * Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
-m6 <- glmmTMB(Number_flowers ~ Cultivar + Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
-m7 <- glmmTMB(Number_flowers ~ Cultivar + (1|Block), family = nbinom2, data = Phenotype)
-m8 <- glmmTMB(Number_flowers ~ Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
+# Candidate GLMs
+m1 <- glm.nb(Number_flowers ~ Cultivar,
+             data = Phenotype)
+m2 <- glm.nb(Number_flowers ~ Treatment_worded,
+             data = Phenotype)
+m3 <- glm.nb(Number_flowers ~ Cultivar + Treatment_worded,
+             data = Phenotype)
+m4 <- glm.nb(Number_flowers ~ Cultivar * Treatment_worded,
+             data = Phenotype)
 
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
-anova(m5, m6, m7, m8) # m7 is best of these
+# Candidate GLMMs
+m5 <- glmmTMB(Number_flowers ~ Cultivar + (1|Block),
+              family = nbinom2, data = Phenotype)
+m6 <- glmmTMB(Number_flowers ~ Treatment_worded + (1|Block),
+              family = nbinom2, data = Phenotype)
+m7 <- glmmTMB(Number_flowers ~ Cultivar + Treatment_worded + (1|Block),
+              family = nbinom2, data = Phenotype)
+m8 <- glmmTMB(Number_flowers ~ Cultivar * Treatment_worded + (1|Block),
+              family = nbinom2, data = Phenotype)
 
+# Test the models using AIC
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
-# Overall this shows m3 to be preferred, lowest AIC. But not significant. Can just use the glm.nb as the random effect does not significantly improve the model.
+# Overall this shows m3 to be preferred.
 
-Model <- glm.nb(Number_flowers ~ Cultivar, data = Phenotype)
-car::Anova(Model , type = "III")
-ModelglmmTMB <- glmmTMB(Number_flowers ~ Cultivar, family = nbinom2, data = Phenotype)
-car::Anova(ModelglmmTMB , type = "III")
+# Best model
+best_model <- m1
 
-# Display the results with significant effects highlighted
-tbl_regression(Model) %>%
-  bold_p()
-tbl_regression(ModelglmmTMB) %>%
-  bold_p()
+# Test fixed effects
+car::Anova(best_model, type = "II")
+
+# Post hoc comparisons (only if significant)
+emmeans(best_model, pairwise ~ Cultivar, type = "response")
+
 
 # Is the number of inflorescences significantly different between cultivars
 m1 <- glm.nb(Number_inflorescences ~ Cultivar * Treatment_worded, data = Phenotype)
