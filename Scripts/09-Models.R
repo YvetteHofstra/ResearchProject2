@@ -40,7 +40,7 @@ Flowers_2 <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoL
 
 Flowering_date <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1460555223&single=true&output=csv") 
 
-Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=217767211&single=true&output=csv")
+Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1067776784&single=true&output=csv")
 
 Observations <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNix7qqZS7cB-KkXmk4Yu7XNvI8uNFhS_ZCfTGwVIziLeXCzH-VlHzEzrndxrzLGgWUj-ssOHRmORV/pub?gid=1102638602&single=true&output=csv")
 
@@ -347,42 +347,42 @@ best_model <- m1
 # Test fixed effects
 car::Anova(best_model, type = "II")
 
+# Post hoc comparisons (only if significant)
+emmeans(best_model, pairwise ~ Cultivar, type = "response")
+
 
 # ---- Flower (date) models ----
 
 ## Flowering date field experiment ##
 
 # Candidate GLMs
-m1 <- glm.nb(Date ~ Cultivar,
+m1 <- glm.nb(Date_numbered ~ Cultivar,
              data = Flowering_date)
-m2 <- glm.nb(Date ~ Treatment_worded,
+m2 <- glm.nb(Date_numbered ~ Treatment_worded,
              data = Flowering_date)
-m3 <- glm.nb(Date ~ Cultivar + Treatment_worded,
+m3 <- glm.nb(Date_numbered ~ Cultivar + Treatment_worded,
              data = Flowering_date)
-m4 <- glm.nb(Date ~ Cultivar * Treatment_worded,
+m4 <- glm.nb(Date_numbered ~ Cultivar * Treatment_worded,
              data = Flowering_date)
 
 # Candidate GLMMs
-m5 <- glmmTMB(Date ~ Cultivar + (1|Block),
+m5 <- glmmTMB(Date_numbered ~ Cultivar + (1|Block),
               family = nbinom2, data = Flowering_date)
-m6 <- glmmTMB(Date ~ Treatment_worded + (1|Block),
+m6 <- glmmTMB(Date_numbered ~ Treatment_worded + (1|Block),
               family = nbinom2, data = Flowering_date)
-m7 <- glmmTMB(Date ~ Cultivar + Treatment_worded + (1|Block),
+m7 <- glmmTMB(Date_numbered ~ Cultivar + Treatment_worded + (1|Block),
               family = nbinom2, data = Flowering_date)
-m8 <- glmmTMB(Date ~ Cultivar * Treatment_worded + (1|Block),
+m8 <- glmmTMB(Date_numbered ~ Cultivar * Treatment_worded + (1|Block),
               family = nbinom2, data = Flowering_date)
 
 # Test the models using AIC
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m1
+best_model <- m2
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 # ---- Repotting/seed (pod) models ----
@@ -399,27 +399,14 @@ m3 <- glm.nb(Seeds_present ~ Cultivar + Treatment_worded,
 m4 <- glm.nb(Seeds_present ~ Cultivar * Treatment_worded,
              data = Nectar)
 
-# Candidate GLMMs
-m5 <- glmmTMB(Seeds_present ~ Cultivar + (1|Block),
-              family = nbinom2, data = Nectar)
-m6 <- glmmTMB(Seeds_present ~ Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-m7 <- glmmTMB(Seeds_present ~ Cultivar + Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-m8 <- glmmTMB(Seeds_present ~ Cultivar * Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-
 # Test the models using AIC
-AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+AIC(m1, m2, m3, m4)
 
 # Best model
-best_model <- m1
+best_model <- m2
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 ## Seed pod abundance ##
@@ -434,27 +421,14 @@ m3 <- glm.nb(Seed_pod_abundance ~ Cultivar + Treatment_worded,
 m4 <- glm.nb(Seed_pod_abundance ~ Cultivar * Treatment_worded,
              data = Nectar)
 
-# Candidate GLMMs
-m5 <- glmmTMB(Seed_pod_abundance ~ Cultivar + (1|Block),
-              family = nbinom2, data = Nectar)
-m6 <- glmmTMB(Seed_pod_abundance ~ Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-m7 <- glmmTMB(Seed_pod_abundance ~ Cultivar + Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-m8 <- glmmTMB(Seed_pod_abundance ~ Cultivar * Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-
 # Test the models using AIC
-AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+AIC(m1, m2, m3, m4)
 
 # Best model
 best_model <- m1
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 ## Seed abundance ##
@@ -469,18 +443,8 @@ m3 <- glm.nb(Seed_abundance ~ Cultivar + Treatment_worded,
 m4 <- glm.nb(Seed_abundance ~ Cultivar * Treatment_worded,
              data = Nectar)
 
-# Candidate GLMMs
-m5 <- glmmTMB(Seed_abundance ~ Cultivar + (1|Block),
-              family = nbinom2, data = Nectar)
-m6 <- glmmTMB(Seed_abundance ~ Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-m7 <- glmmTMB(Seed_abundance ~ Cultivar + Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-m8 <- glmmTMB(Seed_abundance ~ Cultivar * Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-
 # Test the models using AIC
-AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+AIC(m1, m2, m3, m4)
 
 # Best model
 best_model <- m1
@@ -504,27 +468,14 @@ m3 <- glm.nb(Seed_weight ~ Cultivar + Treatment_worded,
 m4 <- glm.nb(Seed_weight ~ Cultivar * Treatment_worded,
              data = Nectar)
 
-# Candidate GLMMs
-m5 <- glmmTMB(Seed_weight ~ Cultivar + (1|Block),
-              family = nbinom2, data = Nectar)
-m6 <- glmmTMB(Seed_weight ~ Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-m7 <- glmmTMB(Seed_weight ~ Cultivar + Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-m8 <- glmmTMB(Seed_weight ~ Cultivar * Treatment_worded + (1|Block),
-              family = nbinom2, data = Nectar)
-
 # Test the models using AIC
-AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+AIC(m1, m2, m3, m4)
 
 # Best model
-best_model <- m1
+best_model <- m2
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 ## Nodule abundance ##
@@ -558,9 +509,6 @@ best_model <- m1
 # Test fixed effects
 car::Anova(best_model, type = "II")
 
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
-
 
 ## Nodule shape ##
 
@@ -588,13 +536,10 @@ m8 <- glmmTMB(Nodule_shape ~ Cultivar * Treatment_worded + (1|Block),
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m1
+best_model <- m2
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 ## Nodule size ##
@@ -623,13 +568,10 @@ m8 <- glmmTMB(Nodule_size ~ Cultivar * Treatment_worded + (1|Block),
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m1
+best_model <- m2
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 ## Root abundance ##
@@ -658,13 +600,10 @@ m8 <- glmmTMB(Root_abundance ~ Cultivar * Treatment_worded + (1|Block),
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m1
+best_model <- m2
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 # ---- Soil models (First measurements, test if treatment works) ----
@@ -695,13 +634,10 @@ m8 <- glmmTMB(Wet ~ Cultivar * Treatment_worded + (1|Block),
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m1
+best_model <- m2
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 ## ECp ##
@@ -730,13 +666,10 @@ m8 <- glmmTMB(ECp ~ Cultivar * Treatment_worded + (1|Block),
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m1
+best_model <- m6
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 ## Eb ##
@@ -765,13 +698,10 @@ m8 <- glmmTMB(Eb ~ Cultivar * Treatment_worded + (1|Block),
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m1
+best_model <- m2
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 ## ECb ##
@@ -800,13 +730,10 @@ m8 <- glmmTMB(ECb ~ Cultivar * Treatment_worded + (1|Block),
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m1
+best_model <- m2
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 # ---- Observation models ----
@@ -851,61 +778,14 @@ m15 <- glmmTMB(Total_arthropods ~ Cultivar * Treatment_worded + (1|Block) + (1|P
 AIC(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15)
 
 # Best model
-best_model <- m1
+best_model <- m15
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
 
 # Post hoc comparisons (only if significant)
 emmeans(best_model, pairwise ~ Cultivar, type = "response")
-
-
-## With the 'Count' in case Total_arthropods is incorrect with the filter ##
-# Candidate GLMs
-m1 <- glm.nb(Count ~ Cultivar,
-             data = Observations_2)
-m2 <- glm.nb(Count ~ Treatment_worded,
-             data = Observations_2)
-m3 <- glm.nb(Count ~ Cultivar + Treatment_worded,
-             data = Observations_2)
-m4 <- glm.nb(Count ~ Cultivar * Treatment_worded,
-             data = Observations_2)
-
-# Candidate GLMMs
-m5 <- glmmTMB(Count ~ Cultivar + (1|Block),
-              family = nbinom2, data = Observations_2)
-m6 <- glmmTMB(Count ~ Treatment_worded + (1|Block),
-              family = nbinom2, data = Observations_2)
-m7 <- glmmTMB(Count ~ Cultivar + Treatment_worded + (1|Block),
-              family = nbinom2, data = Observations_2)
-m8 <- glmmTMB(Count ~ Cultivar * Treatment_worded + (1|Block),
-              family = nbinom2, data = Observations_2)
-m9 <- glmmTMB(Count ~ Cultivar + (1|Plant_ID),
-              family = nbinom2, data = Observations_2)
-m10 <- glmmTMB(Count ~ Cultivar + (1|Block) + (1|Plant_ID),
-               family = nbinom2, data = Observations_2)
-m11 <- glmmTMB(Count ~ Treatment_worded + (1|Plant_ID),
-               family = nbinom2, data = Observations_2)
-m12 <- glmmTMB(Count ~ Treatment_worded + (1|Block) + (1|Plant_ID),
-               family = nbinom2, data = Observations_2)
-m13 <- glmmTMB(Count ~ Cultivar + Treatment_worded + (1|Plant_ID),
-               family = nbinom2, data = Observations_2)
-m14 <- glmmTMB(Count ~ Cultivar + Treatment_worded + (1|Block) + (1|Plant_ID),
-               family = nbinom2, data = Observations_2)
-m15 <- glmmTMB(Count ~ Cultivar * Treatment_worded + (1|Block) + (1|Plant_ID),
-               family = nbinom2, data = Observations_2)
-
-# Test the models using AIC
-AIC(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15)
-
-# Best model
-best_model <- m1
-
-# Test fixed effects
-car::Anova(best_model, type = "II")
-
-# Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
+emmeans(best_model, pairwise ~ Cultivar | Treatment_worded, type = "response")
 
 
 # ---- Combined / other models ----
