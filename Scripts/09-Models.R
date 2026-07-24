@@ -39,6 +39,8 @@ Nectar <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GF
 
 Flowers <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN4V7eOLdZ4JMNue1B_q67kQHkpzGDWt3DCY8FyHVBW5Ml_TR2rViu7jViE_WXihuuZiRc/pub?gid=0&single=true&output=csv") 
 
+Flowers_2 <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN4V7eOLdZ4JMNue1B_q67kQHkpzGDWt3DCY8FyHVBW5Ml_TR2rViu7jViE_WXihuuZiRc/pub?gid=166596564&single=true&output=csv")
+
 Flowering_date <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1460555223&single=true&output=csv") 
 
 Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=217767211&single=true&output=csv")
@@ -55,6 +57,7 @@ Observations <- Observations |>
 str(Phenotype)
 str(Nectar)
 str(Flowers)
+str(Flowers_2)
 str(Flowering_date)
 str(Repotting)
 str(Observations)
@@ -64,6 +67,7 @@ str(Soil)
 Phenotype$Number_inflorescences <- as.numeric(Phenotype$Number_inflorescences)
 Phenotype$Number_flowers <- as.numeric(Phenotype$Number_flowers)
 Flowers$Number_Inflorescences <- as.numeric(Flowers$Number_Inflorescences)
+Flowers_2$Number_Inflorescences <- as.numeric(Flowers_2$Number_Inflorescences)
 Flowering_date$Date_numbered <- as.numeric(Flowering_date$Date_numbered)
 Soil$ECp <- as.numeric(Soil$ECp)
 Soil$ECb <- as.numeric(Soil$ECb)
@@ -99,6 +103,8 @@ Repotting$Seeds_present <- factor(
 
 # ---- Phenotype models ----
 
+## Number of flowers ##
+
 # Candidate GLMs
 m1 <- glm.nb(Number_flowers ~ Cultivar,
              data = Phenotype)
@@ -121,7 +127,6 @@ m8 <- glmmTMB(Number_flowers ~ Cultivar * Treatment_worded + (1|Block),
 
 # Test the models using AIC
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
-# Overall this shows m3 to be preferred.
 
 # Best model
 best_model <- m1
@@ -133,102 +138,179 @@ car::Anova(best_model, type = "II")
 emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
-# Is the number of inflorescences significantly different between cultivars
-m1 <- glm.nb(Number_inflorescences ~ Cultivar * Treatment_worded, data = Phenotype)
-m2 <- glm.nb(Number_inflorescences ~ Cultivar + Treatment_worded, data = Phenotype)
-m3 <- glm.nb(Number_inflorescences ~ Cultivar, data = Phenotype)
-m4 <- glm.nb(Number_inflorescences ~ Treatment_worded, data = Phenotype)
-m5 <- glmmTMB(Number_inflorescences ~ Cultivar * Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
-m6 <- glmmTMB(Number_inflorescences ~ Cultivar + Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
-m7 <- glmmTMB(Number_inflorescences ~ Cultivar + (1|Block), family = nbinom2, data = Phenotype)
-m8 <- glmmTMB(Number_inflorescences ~ Treatment_worded + (1|Block), family = nbinom2, data = Phenotype)
+## Number of inflorescences (April) ##
 
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
-anova(m5, m6, m7, m8) # m7 is best of these
+# Candidate GLMs
+m1 <- glm.nb(Number_inflorescences ~ Cultivar,
+             data = Phenotype)
+m2 <- glm.nb(Number_inflorescences ~ Treatment_worded,
+             data = Phenotype)
+m3 <- glm.nb(Number_inflorescences ~ Cultivar + Treatment_worded,
+             data = Phenotype)
+m4 <- glm.nb(Number_inflorescences ~ Cultivar * Treatment_worded,
+             data = Phenotype)
 
+# Candidate GLMMs
+m5 <- glmmTMB(Number_inflorescences ~ Cultivar + (1|Block),
+              family = nbinom2, data = Phenotype)
+m6 <- glmmTMB(Number_inflorescences ~ Treatment_worded + (1|Block),
+              family = nbinom2, data = Phenotype)
+m7 <- glmmTMB(Number_inflorescences ~ Cultivar + Treatment_worded + (1|Block),
+              family = nbinom2, data = Phenotype)
+m8 <- glmmTMB(Number_inflorescences ~ Cultivar * Treatment_worded + (1|Block),
+              family = nbinom2, data = Phenotype)
+
+# Test the models using AIC
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
-# Overall this shows m3 to be preferred, lowest AIC. No significant difference (AIC <2) but it is also the most parsimonious. 
 
-Model <- glm.nb(Number_inflorescences ~ Cultivar, data = Phenotype)
-car::Anova(Model , type = "III")
+# Best model
+best_model <- m1
+
+# Test fixed effects
+car::Anova(best_model, type = "II")
+
+# Post hoc comparisons (only if significant)
+emmeans(best_model, pairwise ~ Cultivar, type = "response")
+
+
+## Number of inflorescences (June/July) ##
+
+# Candidate GLMs
+m1 <- glm.nb(Number_Inflorescences ~ Cultivar,
+             data = Flowers_2)
+m2 <- glm.nb(Number_Inflorescences ~ Treatment_worded,
+             data = Flowers_2)
+m3 <- glm.nb(Number_Inflorescences ~ Cultivar + Treatment_worded,
+             data = Flowers_2)
+m4 <- glm.nb(Number_Inflorescences ~ Cultivar * Treatment_worded,
+             data = Flowers_2)
+
+# Candidate GLMMs
+m5 <- glmmTMB(Number_Inflorescences ~ Cultivar + (1|Block),
+              family = nbinom2, data = Flowers_2)
+m6 <- glmmTMB(Number_Inflorescences ~ Treatment_worded + (1|Block),
+              family = nbinom2, data = Flowers_2)
+m7 <- glmmTMB(Number_Inflorescences ~ Cultivar + Treatment_worded + (1|Block),
+              family = nbinom2, data = Flowers_2)
+m8 <- glmmTMB(Number_Inflorescences ~ Cultivar * Treatment_worded + (1|Block),
+              family = nbinom2, data = Flowers_2)
+
+# Test the models using AIC
+AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+
+# Best model
+best_model <- m2
+
+# Test fixed effects
+car::Anova(best_model, type = "II")
+
 
 # ---- Nectar models ----
 
-# Is the amount of nectar significantly different between cultivars
-m1 <- glm.nb(Microliter ~ Cultivar * Treatment_worded, data = Nectar)
-m2 <- glm.nb(Microliter ~ Cultivar + Treatment_worded, data = Nectar)
-m3 <- glm.nb(Microliter ~ Cultivar, data = Nectar)
-m4 <- glm.nb(Microliter ~ Treatment_worded, data = Nectar)
+## Nectar collection all plants ##
 
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
+# Candidate GLMs
+m1 <- glm.nb(Microliter ~ Cultivar, 
+             data = Nectar)
+m2 <- glm.nb(Microliter ~ Treatment_worded, 
+             data = Nectar)
+m3 <- glm.nb(Microliter ~ Cultivar + Treatment_worded,
+             data = Nectar)
+m4 <- glm.nb(Microliter ~ Cultivar * Treatment_worded,
+             data = Nectar)
 
+# Test the models using AIC
 AIC(m1, m2, m3, m4)
-# Overall this shows m3 to be preferred, lowest AIC. But not significantly.
 
-Model <- glm.nb(Microliter ~ Cultivar, data = Nectar)
-car::Anova(Model , type = "III")
+# Best model
+best_model <- m1
 
-# Now remove the plants that were not completely tried 
+# Test fixed effects
+car::Anova(best_model, type = "II")
+
+
+## Nectar collection fully harvested plants ##
+
+# First remove them, using their Plant_IDs
 Nectar_cleaned <- Nectar %>%
   filter(!Plant_ID %in% c("A76", "V64", "V67", "V68", "V71", "V73", "C89", "C85", "C64", "C68", "C73", "C76", "C62"))
 
-m1 <- glm.nb(Microliter ~ Cultivar * Treatment_worded, data = Nectar_cleaned )
-m2 <- glm.nb(Microliter ~ Cultivar + Treatment_worded, data = Nectar_cleaned )
-m3 <- glm.nb(Microliter ~ Cultivar, data = Nectar_cleaned )
-m4 <- glm.nb(Microliter ~ Treatment_worded, data = Nectar_cleaned )
+# Candidate GLMs
+m1 <- glm.nb(Microliter ~ Cultivar, 
+             data = Nectar_cleaned)
+m2 <- glm.nb(Microliter ~ Treatment_worded, 
+             data = Nectar_cleaned)
+m3 <- glm.nb(Microliter ~ Cultivar + Treatment_worded,
+             data = Nectar_cleaned)
+m4 <- glm.nb(Microliter ~ Cultivar * Treatment_worded,
+             data = Nectar_cleaned)
 
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
-
+# Test the models using AIC
 AIC(m1, m2, m3, m4)
-# Overall this shows m4 to be preferred, lowest AIC. But not significantly.
 
-Model <- glm.nb(Microliter ~ Treatment_worded, data = Nectar_cleaned)
-car::Anova(Model , type = "III")
+# Best model
+best_model <- m2
+
+# Test fixed effects
+car::Anova(best_model, type = "II")
 
 
 # ---- Flower (round) models ----
 
-m1 <- glm.nb(Average_Inflorescence_Length ~ Cultivar * Treatment_worded, data = Flowers)
-m2 <- glm.nb(Average_Inflorescence_Length ~ Cultivar + Treatment_worded, data = Flowers)
-m3 <- glm.nb(Average_Inflorescence_Length ~ Cultivar, data = Flowers)
-m4 <- glm.nb(Average_Inflorescence_Length ~ Treatment_worded, data = Flowers)
+## Average length (June/July only) ##
 
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
+# Candidate GLMs
+m1 <- glm.nb(Average_Inflorescence_Length ~ Cultivar,
+             data = Flowers_2)
+m2 <- glm.nb(Average_Inflorescence_Length ~ Treatment_worded,
+             data = Flowers_2)
+m3 <- glm.nb(Average_Inflorescence_Length ~ Cultivar + Treatment_worded,
+             data = Flowers_2)
+m4 <- glm.nb(Average_Inflorescence_Length ~ Cultivar * Treatment_worded,
+             data = Flowers_2)
 
+# Candidate GLMMs
+m5 <- glmmTMB(Average_Inflorescence_Length ~ Cultivar + (1|Block),
+              family = nbinom2, data = Flowers_2)
+m6 <- glmmTMB(Average_Inflorescence_Length ~ Treatment_worded + (1|Block),
+              family = nbinom2, data = Flowers_2)
+m7 <- glmmTMB(Average_Inflorescence_Length ~ Cultivar + Treatment_worded + (1|Block),
+              family = nbinom2, data = Flowers_2)
+m8 <- glmmTMB(Average_Inflorescence_Length ~ Cultivar * Treatment_worded + (1|Block),
+              family = nbinom2, data = Flowers_2)
+
+# Test the models using AIC
+AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+
+# Best model
+best_model <- m1
+
+# Test fixed effects
+car::Anova(best_model, type = "II")
+
+
+## Number of inflorescences closest to nectar collection (April only) ##
+
+# This may be informative for significance between nectar and number of inflorescences
+
+# Candidate GLMs
+m1 <- glm.nb(Number_Inflorescences ~ Cultivar,
+             data = Flowers)
+m2 <- glm.nb(Number_Inflorescences ~ Treatment_worded,
+             data = Flowers)
+m3 <- glm.nb(Number_Inflorescences ~ Cultivar + Treatment_worded,
+             data = Flowers)
+m4 <- glm.nb(Number_Inflorescences ~ Cultivar * Treatment_worded,
+             data = Flowers)
+
+# Test the models using AIC
 AIC(m1, m2, m3, m4)
-# Overall this shows m4 to be preferred, lowest AIC. But not significantly.
 
-Model <- glm.nb(Average_Inflorescence_Length ~ Treatment_worded, data = Flowers)
-car::Anova(Model , type = "III")
+# Best model
+best_model <- m1
 
-# Now the number of inflorescences with the counting closest to nectar (could later be combined perhaps to figure out significance between nectar and number of inflorescences)
-m1 <- glm.nb(Number_Inflorescences ~ Cultivar * Treatment_worded, data = Flowers)
-m2 <- glm.nb(Number_Inflorescences ~ Cultivar + Treatment_worded, data = Flowers)
-m3 <- glm.nb(Number_Inflorescences ~ Cultivar, data = Flowers)
-m4 <- glm.nb(Number_Inflorescences ~ Treatment_worded, data = Flowers)
-
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
-
-AIC(m1, m2, m3, m4)
-# Overall this shows m3 to be preferred, lowest AIC. But not significantly.
-
-Model <- glm.nb(Number_Inflorescences ~ Cultivar, data = Flowers)
-car::Anova(Model , type = "III")
+# Test fixed effects
+car::Anova(best_model, type = "II")
 
 
 # ---- Flower (date) models ----
