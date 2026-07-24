@@ -48,14 +48,11 @@ Observations_2 <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNi
 
 Soil <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=224800747&single=true&output=csv") 
 
-# Replace all NAs in the entire data frame with 0
+## Replace all NAs in the entire data frame with 0 ##
 Observations <- Observations |>
   mutate_all(~ ifelse(is.na(.), 0, .))
 
-Observations_2 <- Observations_2 |>
-  mutate_all(~ ifelse(is.na(.), 0, .))
-
-# Show the type of data R will treat it as (numeric, character, factor, etc.)
+## Show the type of data R will treat it as (numeric, character, factor, etc.) ##
 str(Phenotype)
 str(Nectar)
 str(Flowers)
@@ -65,7 +62,7 @@ str(Repotting)
 str(Observations)
 str(Soil)
 
-# Make numeric instead of integer
+## Make numeric where needed ##
 Phenotype$Number_inflorescences <- as.numeric(Phenotype$Number_inflorescences)
 Phenotype$Number_flowers <- as.numeric(Phenotype$Number_flowers)
 Flowers$Number_Inflorescences <- as.numeric(Flowers$Number_Inflorescences)
@@ -74,7 +71,7 @@ Flowering_date$Date_numbered <- as.numeric(Flowering_date$Date_numbered)
 Soil$ECp <- as.numeric(Soil$ECp)
 Soil$ECb <- as.numeric(Soil$ECb)
 
-# Make the yes and no into factor
+## Make the yes and no into factor ##
 Repotting$Nodules_present <- factor(
   Repotting$Nodules_present,
   levels = c(0, 1),
@@ -86,6 +83,42 @@ Repotting$Seeds_present <- factor(
   levels = c(0, 1),
   labels = c("No", "Yes")
 )
+
+## Correct the observations (June/July) ##
+
+# Filter the data to only include flowering plants and replace NA with 0 for arthropod counts after filtering flowering plants. This is important because we only want to consider arthropod visits to flowering plants, and any NA values in the arthropod counts should be treated as zero visits.
+Observations_clean <- Observations_2 %>%
+  filter(Flowering == 1)
+
+arth_cols <- c(
+  "Aglais_io", 	"Andrena", "Anthomyiidae",	"Apis_mellifera", "Autographa_gamma",	"Bibio_marci",	"Bombus_lapidarius", "Bombus_pascuorum", "Bombus_terrestris", "Celastrina_argiolus", "Closterotomus_norwegicus", "Cynomya_mortuorum", "Empis_tessellata", "Larinioides_cornutus", "Oedemera",	"Pieris_rapae", "Pollenia",	"Polyommatus_icarus", "Pseudovadonia_livida",	"Rhagonycha_fulva",	"Sarcophagidae",	"Stenichneumon_culpator",	"Syrphidae",	"Tetanocera", "Thereva_nobilitata",	"Thymelicus_lineola",	"Vanessa_atalanta", "Zygaena_filipendulae"
+)
+
+Observations_clean <- Observations_clean %>%
+  mutate(across(all_of(arth_cols), ~ as.numeric(as.character(.))))
+
+# Replace NA with 0 
+Observations_clean <- Observations_clean %>%
+  mutate(across(all_of(arth_cols), ~ replace_na(., 0)))
+
+# Pivot longer
+Observations_long <- Observations_clean %>%
+  pivot_longer(
+    cols = all_of(arth_cols),
+    names_to = "Visitor",
+    values_to = "Count"
+  )
+
+print(table(Observations_long$Count, useNA = "ifany"))
+
+arth_summary <- Observations_long %>%
+  group_by(Cultivar, Visitor, Treatment_worded) %>%
+  summarise(
+    Count = sum(Count, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+print(summary(arth_summary$Count))
 
 
 # ---- Use for model significance testing ----
@@ -812,6 +845,54 @@ m13 <- glmmTMB(Total_arthropods ~ Cultivar + Treatment_worded + (1|Plant_ID),
 m14 <- glmmTMB(Total_arthropods ~ Cultivar + Treatment_worded + (1|Block) + (1|Plant_ID),
                family = nbinom2, data = Observations_2)
 m15 <- glmmTMB(Total_arthropods ~ Cultivar * Treatment_worded + (1|Block) + (1|Plant_ID),
+               family = nbinom2, data = Observations_2)
+
+# Test the models using AIC
+AIC(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15)
+
+# Best model
+best_model <- m1
+
+# Test fixed effects
+car::Anova(best_model, type = "II")
+
+# Post hoc comparisons (only if significant)
+emmeans(best_model, pairwise ~ Cultivar, type = "response")
+
+
+## With the 'Count' in case Total_arthropods is incorrect with the filter ##
+# Candidate GLMs
+m1 <- glm.nb(Count ~ Cultivar,
+             data = Observations_2)
+m2 <- glm.nb(Count ~ Treatment_worded,
+             data = Observations_2)
+m3 <- glm.nb(Count ~ Cultivar + Treatment_worded,
+             data = Observations_2)
+m4 <- glm.nb(Count ~ Cultivar * Treatment_worded,
+             data = Observations_2)
+
+# Candidate GLMMs
+m5 <- glmmTMB(Count ~ Cultivar + (1|Block),
+              family = nbinom2, data = Observations_2)
+m6 <- glmmTMB(Count ~ Treatment_worded + (1|Block),
+              family = nbinom2, data = Observations_2)
+m7 <- glmmTMB(Count ~ Cultivar + Treatment_worded + (1|Block),
+              family = nbinom2, data = Observations_2)
+m8 <- glmmTMB(Count ~ Cultivar * Treatment_worded + (1|Block),
+              family = nbinom2, data = Observations_2)
+m9 <- glmmTMB(Count ~ Cultivar + (1|Plant_ID),
+              family = nbinom2, data = Observations_2)
+m10 <- glmmTMB(Count ~ Cultivar + (1|Block) + (1|Plant_ID),
+               family = nbinom2, data = Observations_2)
+m11 <- glmmTMB(Count ~ Treatment_worded + (1|Plant_ID),
+               family = nbinom2, data = Observations_2)
+m12 <- glmmTMB(Count ~ Treatment_worded + (1|Block) + (1|Plant_ID),
+               family = nbinom2, data = Observations_2)
+m13 <- glmmTMB(Count ~ Cultivar + Treatment_worded + (1|Plant_ID),
+               family = nbinom2, data = Observations_2)
+m14 <- glmmTMB(Count ~ Cultivar + Treatment_worded + (1|Block) + (1|Plant_ID),
+               family = nbinom2, data = Observations_2)
+m15 <- glmmTMB(Count ~ Cultivar * Treatment_worded + (1|Block) + (1|Plant_ID),
                family = nbinom2, data = Observations_2)
 
 # Test the models using AIC
