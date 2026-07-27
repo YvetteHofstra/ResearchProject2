@@ -27,11 +27,15 @@ readr::read_csv # This makes a tibble instead of table, for every variable it st
 # Load the data file from google drive 
 Flowers <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN4V7eOLdZ4JMNue1B_q67kQHkpzGDWt3DCY8FyHVBW5Ml_TR2rViu7jViE_WXihuuZiRc/pub?gid=0&single=true&output=csv") 
 
+Flowers_2 <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN4V7eOLdZ4JMNue1B_q67kQHkpzGDWt3DCY8FyHVBW5Ml_TR2rViu7jViE_WXihuuZiRc/pub?gid=166596564&single=true&output=csv")
+
 # Show the type of data R will treat it as (numeric, character, factor, etc.)
 str(Flowers)
+str(Flowers_2)
 
 # Make Number_inflorescences numeric instead of integer
 Flowers$Number_Inflorescences <- as.numeric(Flowers$Number_Inflorescences)
+Flowers_2$Number_Inflorescences <- as.numeric(Flowers_2$Number_Inflorescences)
 
 # Make an exploratory graph
 ggplot(Flowers, aes(x = Cultivar, y = Number_Inflorescences)) +
@@ -115,6 +119,38 @@ ggplot(Flowers, aes(x = Cultivar, y = Average_Inflorescence_Length, fill = Treat
   theme_minimal()
 # Save
 # ggsave("Graphs/Inflorescence_length_treatment_boxplot_cultivar_no_facet.png", width = 8, height = 6, dpi = 300)
+
+ggplot(Flowers, aes(x = Cultivar, y = Average_Inflorescence_Length, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(x = "Cultivar",
+       y = "Inflorescence length (mm)",
+       fill = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Inflorescence_length_R1.png", width = 12, height = 8, dpi = 300)
+
+ggplot(Flowers_2, aes(x = Cultivar, y = Average_Inflorescence_Length, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(x = "Cultivar",
+       y = "Inflorescence length (mm)",
+       fill = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Inflorescence_length_R2.png", width = 12, height = 8, dpi = 300)
 
 # Check if it makes sense to add significance to the plot 
 model_inflorescence_length <- glm.nb(Average_Inflorescence_Length ~ Cultivar * Treatment_worded, data = Flowers)
