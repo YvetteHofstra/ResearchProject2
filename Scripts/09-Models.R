@@ -173,7 +173,7 @@ car::Anova(best_model, type = "II")
 emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
-## Number of inflorescences (April) ##
+## Number of inflorescences (March) ##
 
 # Candidate GLMs
 m1 <- glm.nb(Number_inflorescences ~ Cultivar,
@@ -349,6 +349,27 @@ car::Anova(best_model, type = "II")
 
 # Post hoc comparisons (only if significant)
 emmeans(best_model, pairwise ~ Cultivar, type = "response")
+
+## Average length (April only) ##
+
+# Candidate GLMs
+m1 <- glm.nb(Average_Inflorescence_Length ~ Cultivar,
+             data = Flowers)
+m2 <- glm.nb(Average_Inflorescence_Length ~ Treatment_worded,
+             data = Flowers)
+m3 <- glm.nb(Average_Inflorescence_Length ~ Cultivar + Treatment_worded,
+             data = Flowers)
+m4 <- glm.nb(Average_Inflorescence_Length ~ Cultivar * Treatment_worded,
+             data = Flowers)
+
+# Test the models using AIC
+AIC(m1, m2, m3, m4)
+
+# Best model
+best_model <- m2
+
+# Test fixed effects
+car::Anova(best_model, type = "II")
 
 
 # ---- Flower (date) models ----
