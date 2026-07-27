@@ -24,6 +24,7 @@ library(glmmTMB)
 library(gtsummary)
 library(MASS)
 library(multcomp)
+library(nnet)
 library(tidyverse) # Includes ggplot2, dplyr, etc. can also add them separately
 
 readr::read_csv # This makes a tibble instead of a table, for every variable it stores what the type of variable is. It doesn't just stop at the length it can print, which is what table does.
@@ -68,6 +69,8 @@ Phenotype$Number_flowers <- as.numeric(Phenotype$Number_flowers)
 Flowers$Number_Inflorescences <- as.numeric(Flowers$Number_Inflorescences)
 Flowers_2$Number_Inflorescences <- as.numeric(Flowers_2$Number_Inflorescences)
 Flowering_date$Date_numbered <- as.numeric(Flowering_date$Date_numbered)
+Repotting$Nodule_shape <- as.factor(Repotting$Nodule_shape)
+Repotting$Nodule_size  <- as.factor(Repotting$Nodule_size)
 Soil$ECp <- as.numeric(Soil$ECp)
 Soil$ECb <- as.numeric(Soil$ECb)
 
@@ -525,7 +528,7 @@ m8 <- glmmTMB(Nodule_abundance ~ Cultivar * Treatment_worded + (1|Block),
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m1
+best_model <- m
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
@@ -533,15 +536,15 @@ car::Anova(best_model, type = "II")
 
 ## Nodule shape ##
 
-# Candidate GLMs
-m1 <- glm.nb(Nodule_shape ~ Cultivar,
-             data = Repotting)
-m2 <- glm.nb(Nodule_shape ~ Treatment_worded,
-             data = Repotting)
-m3 <- glm.nb(Nodule_shape ~ Cultivar + Treatment_worded,
-             data = Repotting)
-m4 <- glm.nb(Nodule_shape ~ Cultivar * Treatment_worded,
-             data = Repotting)
+# Candidate multinoms
+model <- multinom(Nodule_shape ~ Cultivar,
+                  data = Repotting)
+model2 <- multinom(Nodule_shape ~ Treatment_worded,
+                   data = Repotting)
+model3 <- multinom(Nodule_shape ~ Cultivar + Treatment_worded,
+                   data = Repotting)
+model4 <- multinom(Nodule_shape ~ Cultivar * Treatment_worded,
+                   data = Repotting)
 
 # Candidate GLMMs
 m5 <- glmmTMB(Nodule_shape ~ Cultivar + (1|Block),
@@ -554,26 +557,29 @@ m8 <- glmmTMB(Nodule_shape ~ Cultivar * Treatment_worded + (1|Block),
               family = nbinom2, data = Repotting)
 
 # Test the models using AIC
-AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+AIC(model, model2, model3, model4)
 
 # Best model
-best_model <- m2
+best_model <- model
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
+
+# Post hoc comparisons (only if significant)
+emmeans(best_model, pairwise ~ Cultivar, type = "response")
 
 
 ## Nodule size ##
 
 # Candidate GLMs
-m1 <- glm.nb(Nodule_size ~ Cultivar,
-             data = Repotting)
-m2 <- glm.nb(Nodule_size ~ Treatment_worded,
-             data = Repotting)
-m3 <- glm.nb(Nodule_size ~ Cultivar + Treatment_worded,
-             data = Repotting)
-m4 <- glm.nb(Nodule_size ~ Cultivar * Treatment_worded,
-             data = Repotting)
+model <- multinom(Nodule_size ~ Cultivar,
+                  data = Repotting)
+model2 <- multinom(Nodule_size ~ Treatment_worded,
+                   data = Repotting)
+model3 <- multinom(Nodule_size ~ Cultivar + Treatment_worded,
+                   data = Repotting)
+model4 <- multinom(Nodule_size ~ Cultivar * Treatment_worded,
+                   data = Repotting)
 
 # Candidate GLMMs
 m5 <- glmmTMB(Nodule_size ~ Cultivar + (1|Block),
@@ -587,9 +593,10 @@ m8 <- glmmTMB(Nodule_size ~ Cultivar * Treatment_worded + (1|Block),
 
 # Test the models using AIC
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
+AIC(model, model2, model3, model4)
 
 # Best model
-best_model <- m2
+best_model <- model
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
