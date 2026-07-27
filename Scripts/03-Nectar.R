@@ -145,11 +145,19 @@ ggplot(Nectar,
                 dodge.width = 0.75
               ),
               size = 2) +
-  labs(title = "Nectar per treatment of Medicago sativa",
-       x = "Cultivar",
+  labs(x = "Cultivar",
        y = "Nectar (µL)",
        fill = "Treatment") +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Nectar_microliter_all_plants_plot.png", width = 8, height = 6, dpi = 300)
 
 # Now remove the plants we did not fully harvest (as we had enough) 
 # This means exclude A76, V64, V67, V68, V71, V73, C89, C85, C64, C68, C73, C76, C62
