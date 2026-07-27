@@ -188,14 +188,13 @@ Observations_clean <- Observations_2 %>%
   filter(Flowering == 1)
 
 arth_cols <- c(
-  "Anthomyiidae",	"Apis_mellifera",	"Bibio_marci",	"Bombus_pascuorum", "Bombus_terrestris", "Closterotomus_norwegicus", "Cynomya_mortuorum", "Empis_tessellata", "Larinioides_cornutus",
-  "Oedemera",	"Pollenia",	"Pseudovadonia_livida",	"Rhagonycha_fulva",	"Sarcophagidae",	"Stenichneumon_culpator",	"Syrphidae",	"Tetanocera",	"Zygaena_filipendulae"
+  "Aglais_io", 	"Andrena", "Anthomyiidae",	"Apis_mellifera", "Autographa_gamma",	"Bibio_marci",	"Bombus_lapidarius", "Bombus_pascuorum", "Bombus_terrestris", "Celastrina_argiolus", "Closterotomus_norwegicus", "Cynomya_mortuorum", "Empis_tessellata", "Larinioides_cornutus", "Oedemera",	"Pieris_rapae", "Pollenia",	"Polyommatus_icarus", "Pseudovadonia_livida",	"Rhagonycha_fulva",	"Sarcophagidae",	"Stenichneumon_culpator",	"Syrphidae",	"Tetanocera", "Thereva_nobilitata",	"Thymelicus_lineola",	"Vanessa_atalanta", "Zygaena_filipendulae"
 )
 
 Observations_clean <- Observations_clean %>%
   mutate(across(all_of(arth_cols), ~ as.numeric(as.character(.))))
 
-# Replace NA with 0 (ONLY after filtering flowering plants)
+# Replace NA with 0 
 Observations_clean <- Observations_clean %>%
   mutate(across(all_of(arth_cols), ~ replace_na(., 0)))
 
@@ -218,6 +217,7 @@ arth_summary <- Observations_long %>%
 
 print(summary(arth_summary$Count))
 
+
 ggplot(arth_summary,
        aes(x = Cultivar,
            y = Count,
@@ -236,28 +236,38 @@ ggplot(arth_summary,
   ) +
   scale_fill_discrete(
     labels = c(
+      expression(italic("Aglais_io")),
+      expression(italic("Andrena")),
       "Anthomyiidae",
       expression(italic("Apis mellifera")),
+      expression(italic("Autographa gamma")),
       expression(italic("Bibio marci")),
+      expression(italic("Bombus lapidarius")),
       expression(italic("Bombus pascuorum")),
       expression(italic("Bombus terrestris")),
+      expression(italic("Celastrina argiolus")),
       expression(italic("Closterotomus norwegicus")),
       expression(italic("Cynomya mortuorum")),
       expression(italic("Empis tessellata")),
       expression(italic("Larinioides cornutus")),
       expression(italic("Oedemera")),
+      expression(italic("Pieris rapae")),
       "Pollenia",
+      expression(italic("Polyommatus icarus")),
       expression(italic("Pseudovadonia livida")),
       expression(italic("Rhagonycha fulva")),
       "Sarcophagidae",
       expression(italic("Stenichneumon culpator")),
       "Syrphidae",
       "Tetanocera",
+      expression(italic("Thereva nobilitata")),
+      expression(italic("Thymelicus lineola")),
+      expression(italic("Vanessa atalanta")),
       expression(italic("Zygaena filipendulae"))
   )
 )
 # Save
-# ggsave("Graphs/Arthropods_Round_two_data.png", width = 12, height = 8, dpi = 300)
+# ggsave("Graphs/Arthropods_Round_2_all_data.png", width = 12, height = 8, dpi = 300)
 
 ggplot(arth_summary, aes(x = Cultivar,
                        y = Count,
@@ -280,7 +290,139 @@ ggplot(arth_summary, aes(x = Cultivar,
     legend.title = element_text(size = 14, face = "bold")
   )
 # Save
-# ggsave("Graphs/Arthropods_Round_two_treatment_cultivar.png", width = 12, height = 8, dpi = 300)
+# ggsave("Graphs/Arthropods_Round_2_treatment_cultivar.png", width = 8, height = 6, dpi = 300)
+
+
+
+# Now improve how the plots look and wat to show
+summary(Observations_clean$Total_arthropods)
+table(Observations_clean$Total_arthropods)
+
+Plant_arthropods <- Observations_clean %>%
+  group_by(Plant_ID, Cultivar, Treatment_worded) %>%
+  summarise(
+    Total_arthropods = sum(Total_arthropods, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+ggplot(Plant_arthropods,
+       aes(x = Cultivar,
+           y = Total_arthropods,
+           fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA,
+               alpha = 0.7) +
+  geom_jitter(position = position_jitterdodge(
+    jitter.width = 0.15,
+    dodge.width = 0.75),
+    size = 2) +
+  labs(x = "Cultivar",
+       y = "Total arthropod visits per plant",
+       fill = "Treatment") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Arthropod_total_Round_2_boxplot.png", width = 8, height = 6, dpi = 300)
+
+# This will add a diamond shape at the mean of each boxplot
+ggplot(Plant_arthropods,
+       aes(x = Cultivar,
+           y = Total_arthropods,
+           fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge(
+    jitter.width = 0.15,
+    dodge.width = 0.75),
+    size = 2) +
+  stat_summary(fun = mean,
+               geom = "point",
+               shape = 18,
+               size = 4) +
+  labs(x = "Cultivar",
+       y = "Total arthropod visits per plant",
+       fill = "Treatment") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Arthropod_totals_Round_2_boxplot_diamond.png", width = 8, height = 6, dpi = 300)
+
+arth_summary <- Observations_clean %>%
+  group_by(Cultivar, Treatment_worded) %>%
+  summarise(across(all_of(arth_cols), sum),
+            .groups = "drop") %>%
+  pivot_longer(
+    cols = all_of(arth_cols),
+    names_to = "Visitor",
+    values_to = "Count"
+  )
+
+ggplot(arth_summary,
+       aes(x = Treatment_worded,
+           y = Count,
+           fill = Visitor)) +
+  geom_col(position = "fill") +
+  facet_wrap(~Cultivar) +
+  labs(y = "Relative arthropod composition") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  ) +
+  scale_fill_discrete(
+    labels = c(
+      expression(italic("Aglais_io")),
+      expression(italic("Andrena")),
+      "Anthomyiidae",
+      expression(italic("Apis mellifera")),
+      expression(italic("Autographa gamma")),
+      expression(italic("Bibio marci")),
+      expression(italic("Bombus lapidarius")),
+      expression(italic("Bombus pascuorum")),
+      expression(italic("Bombus terrestris")),
+      expression(italic("Celastrina argiolus")),
+      expression(italic("Closterotomus norwegicus")),
+      expression(italic("Cynomya mortuorum")),
+      expression(italic("Empis tessellata")),
+      expression(italic("Larinioides cornutus")),
+      expression(italic("Oedemera")),
+      expression(italic("Pieris rapae")),
+      "Pollenia",
+      expression(italic("Polyommatus icarus")),
+      expression(italic("Pseudovadonia livida")),
+      expression(italic("Rhagonycha fulva")),
+      "Sarcophagidae",
+      expression(italic("Stenichneumon culpator")),
+      "Syrphidae",
+      "Tetanocera",
+      expression(italic("Thereva nobilitata")),
+      expression(italic("Thymelicus lineola")),
+      expression(italic("Vanessa atalanta")),
+      expression(italic("Zygaena filipendulae"))
+    )
+  )
+# Save
+# ggsave("Graphs/Composition_arthropod_totals_Round_2.png", width = 8, height = 6, dpi = 300)
+
+
+
+
+
+
+
 
 
 
