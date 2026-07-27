@@ -309,8 +309,7 @@ ggplot(Plant_arthropods,
        aes(x = Cultivar,
            y = Total_arthropods,
            fill = Treatment_worded)) +
-  geom_boxplot(outlier.shape = NA,
-               alpha = 0.7) +
+  geom_boxplot(outlier.shape = NA) +
   geom_jitter(position = position_jitterdodge(
     jitter.width = 0.15,
     dodge.width = 0.75),
@@ -416,8 +415,6 @@ ggplot(arth_summary,
   )
 # Save
 # ggsave("Graphs/Composition_arthropod_totals_Round_2.png", width = 8, height = 6, dpi = 300)
-
-
 
 
 
