@@ -84,13 +84,20 @@ ggplot(Repotting, aes(x = Treatment_worded, fill = Seeds_present)) +
 ggplot(Repotting, aes(x = Treatment_worded, fill = Root_abundance)) +
   geom_bar() +
   facet_wrap(~ Cultivar) +
-  labs(title = "Root abundance of Medicago sativa",
-       x = "Treatment",
-       y = "Plants (#)",
+  labs(x = "Treatment",
+       y = "Number of plants",
        fill = "Root abundance") +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+  axis.text.x = element_text(size = 12),
+  axis.text.y = element_text(size = 12),
+  axis.title = element_text(size = 14, face = "bold"),
+  legend.text = element_text(size = 12),
+  legend.title = element_text(size = 14, face = "bold"),
+  strip.text = element_text(size = 12)
+) 
 # Save
-# ggsave("Graphs/Root_abundance_per_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Roots_with_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
 
 
 # Now make a plot for nodules to show in the presentation
@@ -111,7 +118,7 @@ ggplot(Repotting, aes(x = Treatment_worded, fill = Nodule_abundance)) +
     legend.title = element_text(size = 14, face = "bold"),
     strip.text = element_text(size = 12)
   ) 
-# ggsave("Graphs/Plants_w_Nodule_abundance.png", width = 12, height = 8, dpi = 300)
+# ggsave("Graphs/Plants_w_Nodule_abundance.png", width = 8, height = 6, dpi = 300)
 
 ggplot(Repotting, aes(x = Treatment_worded, fill = Nodule_shape)) +
   geom_bar() +
@@ -128,7 +135,7 @@ ggplot(Repotting, aes(x = Treatment_worded, fill = Nodule_shape)) +
     legend.title = element_text(size = 14, face = "bold"),
     strip.text = element_text(size = 12)
   ) 
-# ggsave("Graphs/Plants_w_Nodule_complexity.png", width = 12, height = 8, dpi = 300)
+# ggsave("Graphs/Plants_with_nodule_complexity.png", width = 8, height = 6, dpi = 300)
 
 
 

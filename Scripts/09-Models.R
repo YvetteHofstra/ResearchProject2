@@ -25,6 +25,7 @@ library(gtsummary)
 library(MASS)
 library(multcomp)
 library(nnet)
+library(ordinal)
 library(tidyverse) # Includes ggplot2, dplyr, etc. can also add them separately
 
 readr::read_csv # This makes a tibble instead of a table, for every variable it stores what the type of variable is. It doesn't just stop at the length it can print, which is what table does.
@@ -69,8 +70,6 @@ Phenotype$Number_flowers <- as.numeric(Phenotype$Number_flowers)
 Flowers$Number_Inflorescences <- as.numeric(Flowers$Number_Inflorescences)
 Flowers_2$Number_Inflorescences <- as.numeric(Flowers_2$Number_Inflorescences)
 Flowering_date$Date_numbered <- as.numeric(Flowering_date$Date_numbered)
-Repotting$Nodule_shape <- as.factor(Repotting$Nodule_shape)
-Repotting$Nodule_size  <- as.factor(Repotting$Nodule_size)
 Soil$ECp <- as.numeric(Soil$ECp)
 Soil$ECb <- as.numeric(Soil$ECb)
 
@@ -86,6 +85,12 @@ Repotting$Seeds_present <- factor(
   levels = c(0, 1),
   labels = c("No", "Yes")
 )
+
+Repotting$Nodule_abundance  <- as.factor(Repotting$Nodule_abundance)
+Repotting$Nodule_shape <- as.factor(Repotting$Nodule_shape)
+Repotting$Nodule_size  <- as.factor(Repotting$Nodule_size)
+Repotting$Root_abundance <- as.factor(Repotting$Root_abundance)
+
 
 ## Correct the observations (June/July) ##
 
@@ -504,134 +509,142 @@ car::Anova(best_model, type = "II")
 
 ## Nodule abundance ##
 
-# Candidate GLMs
-m1 <- glm.nb(Nodule_abundance ~ Cultivar,
-             data = Repotting)
-m2 <- glm.nb(Nodule_abundance ~ Treatment_worded,
-             data = Repotting)
-m3 <- glm.nb(Nodule_abundance ~ Cultivar + Treatment_worded,
-             data = Repotting)
-m4 <- glm.nb(Nodule_abundance ~ Cultivar * Treatment_worded,
-             data = Repotting)
+# Candidate CLMs
+m1 <- clm(Nodule_abundance ~ Cultivar,
+          data = Repotting)
+m2 <- clm(Nodule_abundance ~ Treatment_worded,
+          data = Repotting)
+m3 <- clm(Nodule_abundance ~ Cultivar + Treatment_worded,
+          data = Repotting)
+m4 <- clm(Nodule_abundance ~ Cultivar * Treatment_worded,
+          data = Repotting)
 
-# Candidate GLMMs
-m5 <- glmmTMB(Nodule_abundance ~ Cultivar + (1|Block),
-              family = nbinom2, data = Repotting)
-m6 <- glmmTMB(Nodule_abundance ~ Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
-m7 <- glmmTMB(Nodule_abundance ~ Cultivar + Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
-m8 <- glmmTMB(Nodule_abundance ~ Cultivar * Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
+# Candidate CLMMs
+m5 <- clmm(Nodule_abundance ~ Cultivar + (1|Block),
+           data = Repotting)
+m6 <- clmm(Nodule_abundance ~ Treatment_worded + (1|Block),
+           data = Repotting)
+m7 <- clmm(Nodule_abundance ~ Cultivar + Treatment_worded + (1|Block),
+           data = Repotting)
+m8 <- clmm(Nodule_abundance ~ Cultivar * Treatment_worded + (1|Block),
+           data = Repotting)
 
 # Test the models using AIC
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m
+best_model <- m1
 
 # Test fixed effects
-car::Anova(best_model, type = "II")
+drop1(best_model, test = "Chisq")
+
+# Post hoc comparisons (only if significant)
+emmeans(best_model, pairwise ~ Cultivar, mode = "latent")
 
 
 ## Nodule shape ##
 
-# Candidate multinoms
-model <- multinom(Nodule_shape ~ Cultivar,
-                  data = Repotting)
-model2 <- multinom(Nodule_shape ~ Treatment_worded,
-                   data = Repotting)
-model3 <- multinom(Nodule_shape ~ Cultivar + Treatment_worded,
-                   data = Repotting)
-model4 <- multinom(Nodule_shape ~ Cultivar * Treatment_worded,
-                   data = Repotting)
+# Candidate CLMs
+m1 <- clm(Nodule_shape ~ Cultivar,
+          data = Repotting)
+m2 <- clm(Nodule_shape ~ Treatment_worded,
+          data = Repotting)
+m3 <- clm(Nodule_shape ~ Cultivar + Treatment_worded,
+          data = Repotting)
+m4 <- clm(Nodule_shape ~ Cultivar * Treatment_worded,
+          data = Repotting)
 
-# Candidate GLMMs
-m5 <- glmmTMB(Nodule_shape ~ Cultivar + (1|Block),
-              family = nbinom2, data = Repotting)
-m6 <- glmmTMB(Nodule_shape ~ Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
-m7 <- glmmTMB(Nodule_shape ~ Cultivar + Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
-m8 <- glmmTMB(Nodule_shape ~ Cultivar * Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
+# Candidate CLMMs
+m5 <- clmm(Nodule_shape ~ Cultivar + (1|Block),
+           data = Repotting)
+m6 <- clmm(Nodule_shape ~ Treatment_worded + (1|Block),
+           data = Repotting)
+m7 <- clmm(Nodule_shape ~ Cultivar + Treatment_worded + (1|Block),
+           data = Repotting)
+m8 <- clmm(Nodule_shape ~ Cultivar * Treatment_worded + (1|Block),
+           data = Repotting)
 
 # Test the models using AIC
-AIC(model, model2, model3, model4)
+AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- model
+best_model <- m1
 
 # Test fixed effects
-car::Anova(best_model, type = "II")
+drop1(best_model, test = "Chisq")
 
 # Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
+emmeans(best_model, pairwise ~ Cultivar, mode = "latent")
 
 
 ## Nodule size ##
 
-# Candidate GLMs
-model <- multinom(Nodule_size ~ Cultivar,
-                  data = Repotting)
-model2 <- multinom(Nodule_size ~ Treatment_worded,
-                   data = Repotting)
-model3 <- multinom(Nodule_size ~ Cultivar + Treatment_worded,
-                   data = Repotting)
-model4 <- multinom(Nodule_size ~ Cultivar * Treatment_worded,
-                   data = Repotting)
+# Candidate CLMs
+m1 <- clm(Nodule_size ~ Cultivar,
+          data = Repotting)
+m2 <- clm(Nodule_size ~ Treatment_worded,
+          data = Repotting)
+m3 <- clm(Nodule_size ~ Cultivar + Treatment_worded,
+          data = Repotting)
+m4 <- clm(Nodule_size ~ Cultivar * Treatment_worded,
+          data = Repotting)
 
-# Candidate GLMMs
-m5 <- glmmTMB(Nodule_size ~ Cultivar + (1|Block),
-              family = nbinom2, data = Repotting)
-m6 <- glmmTMB(Nodule_size ~ Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
-m7 <- glmmTMB(Nodule_size ~ Cultivar + Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
-m8 <- glmmTMB(Nodule_size ~ Cultivar * Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
+# Candidate CLMMs
+m5 <- clmm(Nodule_size ~ Cultivar + (1|Block),
+           data = Repotting)
+m6 <- clmm(Nodule_size ~ Treatment_worded + (1|Block),
+           data = Repotting)
+m7 <- clmm(Nodule_size ~ Cultivar + Treatment_worded + (1|Block),
+           data = Repotting)
+m8 <- clmm(Nodule_size ~ Cultivar * Treatment_worded + (1|Block),
+           data = Repotting)
 
 # Test the models using AIC
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
-AIC(model, model2, model3, model4)
 
 # Best model
-best_model <- model
+best_model <- m1
 
 # Test fixed effects
-car::Anova(best_model, type = "II")
+drop1(best_model, test = "Chisq")
+
+# Post hoc comparisons (only if significant)
+emmeans(best_model, pairwise ~ Cultivar, mode = "latent")
 
 
 ## Root abundance ##
 
-# Candidate GLMs
-m1 <- glm.nb(Root_abundance ~ Cultivar,
-             data = Repotting)
-m2 <- glm.nb(Root_abundance ~ Treatment_worded,
-             data = Repotting)
-m3 <- glm.nb(Root_abundance ~ Cultivar + Treatment_worded,
-             data = Repotting)
-m4 <- glm.nb(Root_abundance ~ Cultivar * Treatment_worded,
-             data = Repotting)
+# Candidate CLMs
+m1 <- clm(Root_abundance ~ Cultivar,
+          data = Repotting)
+m2 <- clm(Root_abundance ~ Treatment_worded,
+          data = Repotting)
+m3 <- clm(Root_abundance ~ Cultivar + Treatment_worded,
+          data = Repotting)
+m4 <- clm(Root_abundance ~ Cultivar * Treatment_worded,
+          data = Repotting)
 
-# Candidate GLMMs
-m5 <- glmmTMB(Root_abundance ~ Cultivar + (1|Block),
-              family = nbinom2, data = Repotting)
-m6 <- glmmTMB(Root_abundance ~ Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
-m7 <- glmmTMB(Root_abundance ~ Cultivar + Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
-m8 <- glmmTMB(Root_abundance ~ Cultivar * Treatment_worded + (1|Block),
-              family = nbinom2, data = Repotting)
+# Candidate CLMMs
+m5 <- clmm(Root_abundance ~ Cultivar + (1|Block),
+           data = Repotting)
+m6 <- clmm(Root_abundance ~ Treatment_worded + (1|Block),
+           data = Repotting)
+m7 <- clmm(Root_abundance ~ Cultivar + Treatment_worded + (1|Block),
+           data = Repotting)
+m8 <- clmm(Root_abundance ~ Cultivar * Treatment_worded + (1|Block),
+           data = Repotting)
 
 # Test the models using AIC
 AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m2
+best_model <- m5
 
 # Test fixed effects
-car::Anova(best_model, type = "II")
+drop1(best_model, test = "Chisq")
+
+# Post hoc comparisons (only if significant)
+emmeans(best_model, pairwise ~ Cultivar, mode = "latent")
 
 
 # ---- Soil models (First measurements, test if treatment works) ----
@@ -805,6 +818,19 @@ m15 <- glmmTMB(Total_arthropods ~ Cultivar * Treatment_worded + (1|Block) + (1|P
 # Test the models using AIC
 AIC(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15)
 
+# To be certain of the model as there are a lot of 0s test a zero-inflated model
+mZI <- glmmTMB(Total_arthropods ~ Cultivar * Treatment_worded + (1|Plant_ID),
+               ziformula = ~1, family = nbinom2,
+               data = Observations_2)
+
+# Test also if explanatory variables actually improve the model over an intercept-only model
+m0 <- glm.nb(Total_arthropods ~ 1,
+             data = Observations_2)
+m00 <- glmmTMB(Total_arthropods ~ 1 + (1|Plant_ID),
+               family = nbinom2, data = Observations_2)
+
+AIC(m15, mZI, m0, m00)
+
 # Best model
 best_model <- m15
 
@@ -812,8 +838,10 @@ best_model <- m15
 car::Anova(best_model, type = "II")
 
 # Post hoc comparisons (only if significant)
-emmeans(best_model, pairwise ~ Cultivar, type = "response")
-emmeans(best_model, pairwise ~ Cultivar | Treatment_worded, type = "response")
+emmeans(best_model, pairwise ~ Cultivar | Treatment_worded, 
+        type = "response")
+emmeans(best_model, pairwise ~ Treatment_worded | Cultivar, 
+        type = "response")
 
 
 # ---- Combined / other models ----
