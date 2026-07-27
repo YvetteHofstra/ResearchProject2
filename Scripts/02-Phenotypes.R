@@ -166,6 +166,7 @@ ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences, fill = Treatment_
   theme_minimal()
 # Save
 # ggsave("Graphs/Cultivar_with_inflorescences_divided_by_treatment_boxplot.png", width = 8, height = 6, dpi = 300)
+
 ggplot(Phenotype, aes(x = Cultivar, y = Number_inflorescences, fill = Treatment_worded)) +
   geom_boxplot() +
   labs(x = "Cultivar",
@@ -190,6 +191,53 @@ emm <- emmeans(model_inflorescence_nb, ~ Cultivar)
 pairs(emm)
 cld(emm)
 # Inflorescence number differed significantly among cultivars (negative binomial GLM, p = < 0.05), but not between treatment
+
+# Now we need inflorescence abundance for April (before nectar collection) and June (before observations)
+# For that, we need a different datasheet for both
+April <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN4V7eOLdZ4JMNue1B_q67kQHkpzGDWt3DCY8FyHVBW5Ml_TR2rViu7jViE_WXihuuZiRc/pub?gid=0&single=true&output=csv") 
+June <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN4V7eOLdZ4JMNue1B_q67kQHkpzGDWt3DCY8FyHVBW5Ml_TR2rViu7jViE_WXihuuZiRc/pub?gid=166596564&single=true&output=csv") 
+
+# Make numeric instead of integer
+April$Number_Inflorescences <- as.numeric(April$Number_Inflorescences)
+June$Number_Inflorescences <- as.numeric(June$Number_Inflorescences)
+
+Inflorescence_April <- ggplot(April, aes(x = Cultivar, y = Number_Inflorescences, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(x = "Cultivar",
+       y = "Number of inflorescences",
+       fill = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  )
+# Save
+# ggsave("Graphs/Number_of_inflorescences_April.png", width = 12, height = 8, dpi = 300)
+
+Inflorescence_June <- ggplot(June, aes(x = Cultivar, y = Number_Inflorescences, fill = Treatment_worded)) +
+  geom_boxplot() +
+  labs(x = "Cultivar",
+       y = "Number of inflorescences",
+       fill = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Number_of_inflorescences_June.png", width = 12, height = 8, dpi = 300)
+
+library(patchwork)
+combined_plot <- Inflorescence_April + Inflorescence_June + 
+  plot_layout(ncol = 2, widths = c(1, 1))
+# ggsave("Graphs/Number_of_inflorescences_April&June.png", width = 16, height = 8, dpi = 300)
+# ggsave("Graphs/Number_of_inflorescences_April&June_1_Legend.png", width = 16, height = 8, dpi = 300)
+
 
 # Try to add the flower color in a plot. E.g. first the flower color per variety
 ggplot(Phenotype, aes(x = Cultivar, fill = Flower_color_simple)) +
