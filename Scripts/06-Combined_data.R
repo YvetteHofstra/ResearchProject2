@@ -816,11 +816,14 @@ ggplot(Combined_data2,
        aes(x = Number_Inflorescences_inside,
            y = Microliter,
            colour = Treatment_worded)) +
-  geom_point(size = 3) +
+  geom_point(position = position_jitterdodge(
+    jitter.width = 0.15,
+    dodge.width = 0.75),
+    size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
   labs(x = "Number of inflorescences",
        y = "Nectar (µL)",
-       fill = "Treatment") +
+       colour = "Treatment") +
   theme_minimal() +
   theme(
     axis.text.x = element_text(size = 12),
@@ -837,13 +840,16 @@ ggplot(Combined_data2,
        aes(x = Number_Inflorescences_outside,
            y = Total_arthropods,
            colour = Treatment_worded)) +
-  geom_point(size = 3) +
+  geom_point(position = position_jitterdodge(
+    jitter.width = 0.15,
+    dodge.width = 0.75),
+    size = 2) +
   geom_smooth(method = "glm",
               method.args = list(family = "poisson"),
               se = FALSE) +
   labs(x = "Number of inflorescences",
        y = "Total arthropod visits",
-       fill = "Treatment") +
+       colour = "Treatment") +
   theme_minimal() +
   theme(
     axis.text.x = element_text(size = 12),
@@ -859,13 +865,13 @@ ggplot(Combined_data2,
        aes(x = Microliter,
            y = Total_arthropods,
            colour = Treatment_worded)) +
-  geom_point(size = 3) +
+  geom_point(size = 2) +
   geom_smooth(method = "glm",
               method.args = list(family = "poisson"),
               se = FALSE) +
   labs(x = "Nectar (µL)",
        y = "Total arthropod visits",
-       fill = "Treatment") +
+       colour = "Treatment") +
   theme_minimal() + 
   theme(
     axis.text.x = element_text(size = 12),
