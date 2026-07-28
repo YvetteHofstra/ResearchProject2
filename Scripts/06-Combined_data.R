@@ -34,31 +34,122 @@ Nectar <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GF
 
 Flowers <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN4V7eOLdZ4JMNue1B_q67kQHkpzGDWt3DCY8FyHVBW5Ml_TR2rViu7jViE_WXihuuZiRc/pub?gid=0&single=true&output=csv") 
 
+Flowers_2 <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQgacYoLmN4V7eOLdZ4JMNue1B_q67kQHkpzGDWt3DCY8FyHVBW5Ml_TR2rViu7jViE_WXihuuZiRc/pub?gid=166596564&single=true&output=csv")
+
+Flowering_date <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1460555223&single=true&output=csv") 
+
 Repotting <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=1067776784&single=true&output=csv")
 
 Observations <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNix7qqZS7cB-KkXmk4Yu7XNvI8uNFhS_ZCfTGwVIziLeXCzH-VlHzEzrndxrzLGgWUj-ssOHRmORV/pub?gid=1102638602&single=true&output=csv")
 
 Observations_2 <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNix7qqZS7cB-KkXmk4Yu7XNvI8uNFhS_ZCfTGwVIziLeXCzH-VlHzEzrndxrzLGgWUj-ssOHRmORV/pub?gid=2034963164&single=true&output=csv")
 
-Soil <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTR4kOxATM525UmU7895FgLFgjHlL2RJ_Cgtb5fepWR-vRVZpwzLF3OIc4ZtvtTDQge1iUkyZY5W8Se/pub?gid=1854960858&single=true&output=csv")
+Soil <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTrKk4lVr_GFFwaudVT_jG4tLL9LhCNixrmjzVfOHbsHk3y-3YA8C9dtlWfm4QyFoy9Xmhn2AQmr7SY/pub?gid=224800747&single=true&output=csv") 
 
-# Replace all NAs in the entire data frame with 0
+## Replace all NAs in the entire data frame with 0 ##
 Observations <- Observations |>
   mutate_all(~ ifelse(is.na(.), 0, .))
 
-# Show the type of data R will treat it as (numeric, character, factor, etc.)
+## Show the type of data R will treat it as (numeric, character, factor, etc.) ##
 str(Phenotype)
 str(Nectar)
 str(Flowers)
+str(Flowers_2)
+str(Flowering_date)
 str(Repotting)
 str(Observations)
+str(Soil)
 
-# Make numeric instead of integer
+## Make numeric where needed ##
 Phenotype$Number_inflorescences <- as.numeric(Phenotype$Number_inflorescences)
 Phenotype$Number_flowers <- as.numeric(Phenotype$Number_flowers)
 Flowers$Number_Inflorescences <- as.numeric(Flowers$Number_Inflorescences)
+Flowers_2$Number_Inflorescences <- as.numeric(Flowers_2$Number_Inflorescences)
+Flowering_date$Date_numbered <- as.numeric(Flowering_date$Date_numbered)
 Soil$ECp <- as.numeric(Soil$ECp)
 Soil$ECb <- as.numeric(Soil$ECb)
+
+## Make the yes and no into factor ##
+Repotting$Nodules_present <- factor(
+  Repotting$Nodules_present,
+  levels = c(0, 1),
+  labels = c("No", "Yes")
+)
+
+Repotting$Seeds_present <- factor(
+  Repotting$Seeds_present,
+  levels = c(0, 1),
+  labels = c("No", "Yes")
+)
+
+Repotting$Nodule_abundance  <- as.factor(Repotting$Nodule_abundance)
+Repotting$Nodule_shape <- as.factor(Repotting$Nodule_shape)
+Repotting$Nodule_size  <- as.factor(Repotting$Nodule_size)
+Repotting$Root_abundance <- as.factor(Repotting$Root_abundance)
+
+
+## Correct the observations (June/July) ##
+
+# Filter the data to only include flowering plants and replace NA with 0 for arthropod counts after filtering flowering plants. This is important because we only want to consider arthropod visits to flowering plants, and any NA values in the arthropod counts should be treated as zero visits.
+Observations_clean <- Observations_2 %>%
+  filter(Flowering == 1)
+
+arth_cols <- c(
+  "Aglais_io", "Andrena", "Anthomyiidae", "Apis_mellifera",
+  "Autographa_gamma", "Bibio_marci", "Bombus_lapidarius",
+  "Bombus_pascuorum", "Bombus_terrestris", "Celastrina_argiolus",
+  "Closterotomus_norwegicus", "Cynomya_mortuorum",
+  "Empis_tessellata", "Larinioides_cornutus", "Oedemera",
+  "Pieris_rapae", "Pollenia", "Polyommatus_icarus",
+  "Pseudovadonia_livida", "Rhagonycha_fulva", "Sarcophagidae",
+  "Stenichneumon_culpator", "Syrphidae", "Tetanocera",
+  "Thereva_nobilitata", "Thymelicus_lineola",
+  "Vanessa_atalanta", "Zygaena_filipendulae"
+)
+
+Observations_clean <- Observations_clean %>%
+  mutate(across(all_of(arth_cols), ~ as.numeric(as.character(.)))) %>%
+  mutate(across(all_of(arth_cols), ~ replace_na(., 0)))
+
+# Total visits per plant
+Plant_arthropods <- Observations_clean %>%
+  group_by(Plant_ID) %>%
+  summarise(
+    Total_arthropods = sum(Total_arthropods, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Nectar dataset
+Nectar_cleaned <- Nectar %>%
+  filter(!Plant_ID %in% c("A76", "V64", "V67", "V68", 
+                          "V71", "V73", "C89", "C85",
+                          "C64", "C68", "C73", "C76", "C62")) %>%
+  dplyr::select(Plant_ID, Microliter)
+
+# Flower measurements
+Flowers_inside <- Flowers %>%
+  dplyr::select(
+    Plant_ID,
+    Number_Inflorescences_inside = Number_Inflorescences
+  )
+
+Flowers_outside <- Flowers_2 %>%
+  dplyr::select(
+    Plant_ID,
+    Number_Inflorescences_outside = Number_Inflorescences
+  )
+
+# Final combined dataset for plots/models
+Combined_data2 <- Phenotype %>%
+  dplyr::select(Plant_ID, Cultivar, Treatment_worded) %>%
+  left_join(Nectar_cleaned, by = "Plant_ID") %>%
+  left_join(Plant_arthropods, by = "Plant_ID") %>%
+  left_join(Flowers_inside, by = "Plant_ID") %>%
+  left_join(Flowers_outside, by = "Plant_ID")
+
+
+
+### First combined graphs ### 
 
 # Combine the data frames into one data frame, using the common column "Plant_ID" to be able to work with all data in one data frame.
 Combined_data <- Phenotype %>%
@@ -713,6 +804,100 @@ ggplot(Combined_data, aes(x = Root_abundance, y = Filled_until_mm, fill = Treatm
        y = "Nectar volume (microliter)",
        fill = "Treatment") +
   theme_minimal()
+
+
+
+### Second try ###
+
+########
+# These combine the 3 variables needed: inflorescence, nectar, visits
+
+ggplot(Combined_data2,
+       aes(x = Number_Inflorescences_inside,
+           y = Microliter,
+           colour = Treatment_worded)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Number of inflorescences",
+       y = "Nectar (µL)",
+       fill = "Treatment") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Combined_plots_Round_2_Infl_Nectar.png", width = 6, height = 4, dpi = 300)
+
+
+ggplot(Combined_data2,
+       aes(x = Number_Inflorescences_outside,
+           y = Total_arthropods,
+           colour = Treatment_worded)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "glm",
+              method.args = list(family = "poisson"),
+              se = FALSE) +
+  labs(x = "Number of inflorescences",
+       y = "Total arthropod visits",
+       fill = "Treatment") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Combined_plots_Round_2_Infl_visits.png", width = 6, height = 4, dpi = 300)
+
+ggplot(Combined_data2,
+       aes(x = Microliter,
+           y = Total_arthropods,
+           colour = Treatment_worded)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "glm",
+              method.args = list(family = "poisson"),
+              se = FALSE) +
+  labs(x = "Nectar (µL)",
+       y = "Total arthropod visits",
+       fill = "Treatment") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/Combined_plots_Round_2_Nectar_visits.png", width = 6, height = 4, dpi = 300)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
