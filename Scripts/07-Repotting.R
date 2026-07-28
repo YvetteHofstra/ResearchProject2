@@ -56,6 +56,11 @@ Repotting$Seeds_present <- factor(
   labels = c("No", "Yes")
 )
 
+Repotting$Nodule_size <- factor(
+  Repotting$Nodule_size,
+  levels = c("None", "Small", "Both", "Big")
+)
+
 # Make an exploratory graph
 ggplot(Repotting, aes(x = Treatment_worded, fill = Nodules_present)) +
   geom_bar() +
@@ -98,6 +103,7 @@ ggplot(Repotting, aes(x = Treatment_worded, fill = Root_abundance)) +
 ) 
 # Save
 # ggsave("Graphs/Roots_with_cultivar_and_treatment.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Roots_with_cultivar_and_treatment_.png", width = 8, height = 4, dpi = 300)
 
 
 # Now make a plot for nodules to show in the presentation
@@ -119,6 +125,7 @@ ggplot(Repotting, aes(x = Treatment_worded, fill = Nodule_abundance)) +
     strip.text = element_text(size = 12)
   ) 
 # ggsave("Graphs/Plants_w_Nodule_abundance.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Plants_w_Nodule_abundance_.png", width = 8, height = 4, dpi = 300)
 
 ggplot(Repotting, aes(x = Treatment_worded, fill = Nodule_shape)) +
   geom_bar() +
@@ -136,9 +143,26 @@ ggplot(Repotting, aes(x = Treatment_worded, fill = Nodule_shape)) +
     strip.text = element_text(size = 12)
   ) 
 # ggsave("Graphs/Plants_with_nodule_complexity.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Plants_with_nodule_complexity_.png", width = 8, height = 4, dpi = 300)
 
 
-
+ggplot(Repotting, aes(x = Treatment_worded, fill = Nodule_size)) +
+  geom_bar() +
+  facet_wrap(~ Cultivar) +
+  labs(y = "Number of plants",
+       x = "Treatment",
+       fill = "Nodule size") +
+  theme_minimal() + 
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold"),
+    strip.text = element_text(size = 12)
+  ) 
+# ggsave("Graphs/Plants_with_nodule_size_.png", width = 10, height = 6, dpi = 300)
+# ggsave("Graphs/Plants_with_nodule_and_size.png", width = 8, height = 4, dpi = 300)
 
 
 
