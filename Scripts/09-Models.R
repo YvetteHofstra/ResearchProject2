@@ -109,6 +109,13 @@ Observations_clean <- Observations_clean %>%
 Observations_clean <- Observations_clean %>%
   mutate(across(all_of(arth_cols), ~ replace_na(., 0)))
 
+Plant_arthropods <- Observations_clean %>%
+  group_by(Plant_ID, Cultivar, Treatment_worded) %>%
+  summarise(
+    Total_arthropods = sum(Total_arthropods, na.rm = TRUE),
+    .groups = "drop"
+  )
+
 # Pivot longer
 Observations_long <- Observations_clean %>%
   pivot_longer(
@@ -895,8 +902,8 @@ mZI <- glmmTMB(NumTaxa ~ Cultivar * Treatment_worded + (1|Plant_ID),
                ziformula = ~1, family = nbinom2,
                data = Orders_per_plant)
 mZI2 <- glmmTMB(NumTaxa ~ Cultivar + Treatment_worded,
-               ziformula = ~1, family = nbinom2,
-               data = Orders_per_plant)
+                ziformula = ~1, family = nbinom2,
+                data = Orders_per_plant)
 
 # Test also if explanatory variables actually improve the model over an intercept-only model
 m0 <- glm.nb(NumTaxa ~ 1,
@@ -917,86 +924,95 @@ car::Anova(best_model, type = "II")
 
 # Combine the data frames into one data frame, using the common column "Plant_ID" to be able to work with all data in one data frame.
 Combined_data <- Phenotype %>%
-  #  left_join(Nectar, by = "Plant_ID") %>%
   left_join(Nectar_cleaned, by = "Plant_ID") %>%
+  left_join(Plant_arthropods, by = "Plant_ID") %>%
   left_join(Flowers, by = "Plant_ID") %>%
-  left_join(Repotting, by = "Plant_ID") %>%
-  left_join(Observations, by = "Plant_ID") %>%
-  left_join(Soil, by = "Plant_ID") %>%
-  left_join(Flowering_date, by = "Plant_ID")
+  left_join(Flowers_2, by = "Plant_ID")
 
 
+## Number of inflorescences with nectar ##
+
+# Candidate LMs
+m1 <- lm(Microliter ~ Number_Inflorescences.x,
+         data = Combined_data)
+m2 <- lm(Microliter ~ Number_Inflorescences.x + Cultivar,
+         data = Combined_data)
+m3 <- lm(Microliter ~ Number_Inflorescences.x + Treatment_worded,
+         data = Combined_data)
+m4 <- lm(Microliter ~ Number_Inflorescences.x + Cultivar * Treatment_worded,
+         data = Combined_data)
+
+# Test the models using AIC
+AIC(m1, m2, m3, m4)
+
+# Best model
+best_model <- m1
+
+# Test fixed effects
+car::Anova(best_model, type = "II")
 
 
+### Total arthropods with number of inflorescences ###
 
-m1 <- glm.nb(Microliter ~ Number_Inflorescences, data = Combined_data)
-m2 <- glm.nb(Microliter ~ Number_Inflorescences + Cultivar + Treatment_worded, data = Combined_data)
-m3 <- glm.nb(Microliter ~ Number_Inflorescences + Cultivar, data = Combined_data)
-m4 <- glm.nb(Microliter ~ Number_Inflorescences + Treatment_worded, data = Combined_data)
-m5 <- glm.nb(Microliter ~ Average_Inflorescence_Length, data = Combined_data)
-m6 <- glm.nb(Microliter ~ Average_Inflorescence_Length + Cultivar, data = Combined_data)
-m7 <- glm.nb(Microliter ~ Average_Inflorescence_Length + Treatment_worded, data = Combined_data)
+# Here there can be made use of the same blocks so change the left_join to include Block
+Combined_data2 <- Phenotype %>%
+  left_join(Nectar_cleaned, by = "Plant_ID") %>%
+  left_join(Plant_arthropods, by = "Plant_ID") %>%
+  left_join(Flowers, by = "Plant_ID") %>%
+  left_join(Flowers_2 %>% select(Plant_ID, Number_Inflorescences, Block), by = "Plant_ID")
 
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
-anova(m5)
-anova(m6)
-anova(m7)
+# Candidate GLMs
+m1 <- glm.nb(Total_arthropods ~ Number_Inflorescences.y,
+             data = Combined_data)
+m2 <- glm.nb(Total_arthropods ~ Number_Inflorescences.y + Cultivar,
+             data = Combined_data)
+m3 <- glm.nb(Total_arthropods ~ Number_Inflorescences.y + Treatment_worded,
+             data = Combined_data)
+m4 <- glm.nb(Total_arthropods ~ Number_Inflorescences.y + Cultivar * Treatment_worded,
+             data = Combined_data)
 
-AIC(m1, m2, m3, m4, m5, m6, m7)
-# Overall this shows m6 to be preferred, lowest AIC.
+# Candidate GLMMs
+m5 <- glmmTMB(Total_arthropods ~ Number_Inflorescences.y + (1|Block),
+              family = nbinom2, data = Combined_data)
+m6 <- glmmTMB(Total_arthropods ~ Number_Inflorescences.y + Cultivar + (1|Block),
+              family = nbinom2, data = Combined_data) 
+m7 <- glmmTMB(Total_arthropods ~ Number_Inflorescences.y + Treatment_worded + (1|Block),
+              family = nbinom2, data = Combined_data) 
+m8 <- glmmTMB(Total_arthropods ~ Number_Inflorescences.y + Cultivar + Treatment_worded + (1|Block),
+              family = nbinom2, data = Combined_data)
 
-Model <- glm.nb(Microliter ~ Average_Inflorescence_Length + Cultivar, data = Combined_data)
-car::Anova(Model , type = "III")
+# Test the models using AIC
+AIC(m1, m2, m3, m4)
 
+# Best model
+best_model <- m3
 
-
-
-
-m1 <- glm.nb(Microliter ~ Total_arthropods, data = Combined_data)
-m2 <- glm.nb(Microliter ~ Total_arthropods + Cultivar + Treatment_worded, data = Combined_data)
-m3 <- glm.nb(Microliter ~ Total_arthropods + Cultivar, data = Combined_data)
-m4 <- glm.nb(Microliter ~ Total_arthropods + Treatment_worded, data = Combined_data)
-m5 <- glm.nb(Microliter ~ Total_arthropods + Cultivar * Treatment_worded, data = Combined_data)
-
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
-anova(m5)
-
-AIC(m1, m2, m3, m4, m5)
-# Overall this shows m3 to be preferred, lowest AIC. But not significant.
-
-Model <- glm.nb(Microliter ~ Total_arthropods + Cultivar, data = Combined_data)
-car::Anova(Model , type = "III")
+# Test fixed effects
+car::Anova(best_model, type = "II")
 
 
+### Total arthropods with nectar volume ###
+
+# Candidate GLMs
+m1 <- glm.nb(Total_arthropods ~ Microliter,
+             data = Combined_data)
+m2 <- glm.nb(Total_arthropods ~ Microliter + Cultivar,
+             data = Combined_data)
+m3 <- glm.nb(Total_arthropods ~ Microliter + Treatment_worded,
+             data = Combined_data)
+m4 <- glm.nb(Total_arthropods ~ Microliter + Cultivar * Treatment_worded,
+             data = Combined_data)
+
+# Test the models using AIC
+AIC(m1, m2, m3, m4)
+
+# Best model
+best_model <- m3
+
+# Test fixed effects
+car::Anova(best_model, type = "II")
 
 
-m1 <- glm.nb(Number_flowers ~ Cultivar, data = Combined_data)
-m2 <- glm.nb(Number_flowers ~ Cultivar + Treatment_worded, data = Combined_data)
-m3 <- glm.nb(Number_flowers ~ Nodules_present, data = Combined_data)
-m4 <- glm.nb(Number_flowers ~ Treatment_worded, data = Combined_data)
-m5 <- glm.nb(Number_flowers ~ Root_abundance, data = Combined_data)
-m6 <- glm.nb(Number_flowers ~ Seeds_present, data = Combined_data)
-m7 <- glm.nb(Number_flowers ~ Seed_pod_abundance, data = Combined_data)
-
-anova(m1)
-anova(m2)
-anova(m3)
-anova(m4)
-anova(m5)
-anova(m6)
-anova(m7)
-
-AIC(m1, m2, m3, m4, m5, m6, m7)
-# Overall this shows m2 to be preferred, lowest AIC.
-
-Model <- glm.nb(Number_flowers ~ Cultivar + Treatment_worded, data = Combined_data)
-car::Anova(Model , type = "III")
 
 
 
