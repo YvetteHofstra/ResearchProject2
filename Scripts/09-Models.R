@@ -128,6 +128,13 @@ arth_summary <- Observations_long %>%
 
 print(summary(arth_summary$Count))
 
+# Add a taxa summary to identify if diversity is influenced by cultivar or treatment
+Orders_per_plant <- Observations_long %>%
+  group_by(Plant_ID,Cultivar, Treatment_worded,Visitor,Block) %>%
+  summarise(Count = sum(Count), .groups = "drop") %>%
+  group_by(Plant_ID, Cultivar, Treatment_worded,Block) %>%
+  summarise(NumTaxa = sum(Count > 0), .groups = "drop")
+
 
 # ---- Use for model significance testing ----
 
@@ -842,6 +849,68 @@ emmeans(best_model, pairwise ~ Cultivar | Treatment_worded,
         type = "response")
 emmeans(best_model, pairwise ~ Treatment_worded | Cultivar, 
         type = "response")
+
+
+## Arthropod taxa (June/July) ##
+
+# Candidate GLMs
+m1 <- glm.nb(NumTaxa ~ Cultivar,
+             data = Orders_per_plant)
+m2 <- glm.nb(NumTaxa ~ Treatment_worded,
+             data = Orders_per_plant)
+m3 <- glm.nb(NumTaxa ~ Cultivar + Treatment_worded,
+             data = Orders_per_plant)
+m4 <- glm.nb(NumTaxa ~ Cultivar * Treatment_worded,
+             data = Orders_per_plant)
+
+# Candidate GLMMs
+m5 <- glmmTMB(NumTaxa ~ Cultivar + (1|Block),
+              family = nbinom2, data = Orders_per_plant)
+m6 <- glmmTMB(NumTaxa ~ Treatment_worded + (1|Block),
+              family = nbinom2, data = Orders_per_plant)
+m7 <- glmmTMB(NumTaxa ~ Cultivar + Treatment_worded + (1|Block),
+              family = nbinom2, data = Orders_per_plant)
+m8 <- glmmTMB(NumTaxa ~ Cultivar * Treatment_worded + (1|Block),
+              family = nbinom2, data = Orders_per_plant)
+m9 <- glmmTMB(NumTaxa ~ Cultivar + (1|Plant_ID),
+              family = nbinom2, data = Orders_per_plant)
+m10 <- glmmTMB(NumTaxa ~ Cultivar + (1|Block) + (1|Plant_ID),
+               family = nbinom2, data = Orders_per_plant)
+m11 <- glmmTMB(NumTaxa ~ Treatment_worded + (1|Plant_ID),
+               family = nbinom2, data = Orders_per_plant)
+m12 <- glmmTMB(NumTaxa ~ Treatment_worded + (1|Block) + (1|Plant_ID),
+               family = nbinom2, data = Orders_per_plant)
+m13 <- glmmTMB(NumTaxa ~ Cultivar + Treatment_worded + (1|Plant_ID),
+               family = nbinom2, data = Orders_per_plant)
+m14 <- glmmTMB(NumTaxa ~ Cultivar + Treatment_worded + (1|Block) + (1|Plant_ID),
+               family = nbinom2, data = Orders_per_plant)
+m15 <- glmmTMB(NumTaxa ~ Cultivar * Treatment_worded + (1|Block) + (1|Plant_ID),
+               family = nbinom2, data = Orders_per_plant)
+
+# Test the models using AIC
+AIC(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15)
+
+# To be certain of the model as there are a lot of 0s test a zero-inflated model
+mZI <- glmmTMB(NumTaxa ~ Cultivar * Treatment_worded + (1|Plant_ID),
+               ziformula = ~1, family = nbinom2,
+               data = Orders_per_plant)
+mZI2 <- glmmTMB(NumTaxa ~ Cultivar + Treatment_worded,
+               ziformula = ~1, family = nbinom2,
+               data = Orders_per_plant)
+
+# Test also if explanatory variables actually improve the model over an intercept-only model
+m0 <- glm.nb(NumTaxa ~ 1,
+             data = Orders_per_plant)
+m00 <- glmmTMB(NumTaxa ~ 1 + (1|Plant_ID),
+               family = nbinom2, data = Orders_per_plant)
+
+AIC(m3, mZI, mZI2, m0, m00)
+
+# Best model
+best_model <- mZI2
+
+# Test fixed effects
+car::Anova(best_model, type = "II")
 
 
 # ---- Combined / other models ----

@@ -224,7 +224,7 @@ ggplot(arth_summary,
            fill = Visitor)) +
   geom_col() +
   labs(x = "Cultivar",
-    y = "Total arthropod visits"
+       y = "Total arthropod visits"
   ) +
   theme_minimal() + 
   theme(
@@ -264,14 +264,14 @@ ggplot(arth_summary,
       expression(italic("Thymelicus lineola")),
       expression(italic("Vanessa atalanta")),
       expression(italic("Zygaena filipendulae"))
+    )
   )
-)
 # Save
-# ggsave("Graphs/Arthropods_Round_2_all_data.png", width = 12, height = 8, dpi = 300)
+# ggsave("Graphs/Arthropods_Round_2_all_data_.png", width = 16, height = 8, dpi = 300)
 
 ggplot(arth_summary, aes(x = Cultivar,
-                       y = Count,
-                       fill = Treatment_worded)) +
+                         y = Count,
+                         fill = Treatment_worded)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(color = "black",
               position = position_jitterdodge(
@@ -372,7 +372,8 @@ ggplot(arth_summary,
            fill = Visitor)) +
   geom_col(position = "fill") +
   facet_wrap(~Cultivar) +
-  labs(y = "Relative arthropod composition") +
+  labs(y = "Relative arthropod taxa composition",
+       x = "Treatment") +
   theme_minimal() +
   theme(
     axis.text.x = element_text(size = 12),
@@ -383,7 +384,7 @@ ggplot(arth_summary,
   ) +
   scale_fill_discrete(
     labels = c(
-      expression(italic("Aglais_io")),
+      expression(italic("Aglais io")),
       expression(italic("Andrena")),
       "Anthomyiidae",
       expression(italic("Apis mellifera")),
@@ -414,10 +415,36 @@ ggplot(arth_summary,
     )
   )
 # Save
-# ggsave("Graphs/Composition_arthropod_totals_Round_2.png", width = 8, height = 6, dpi = 300)
+# ggsave("Graphs/Composition_arthropod_taxa_totals_Round_2_.png", width = 14, height = 6, dpi = 300)
 
 
+# Try to make a plot that shows how many orders of arthropods were observed in each treatment and cultivar (later combine some groups, e.g. the bombus and butterfly ones to a "bee" and "butterfly" group, respectively, to make it easier to read the plot)
 
+Orders_per_plant <- Observations_long %>%
+  group_by(Plant_ID,Cultivar, Treatment_worded,Visitor) %>%
+  summarise(Count = sum(Count), .groups = "drop") %>%
+  group_by(Plant_ID, Cultivar, Treatment_worded) %>%
+  summarise(NumTaxa = sum(Count > 0), .groups = "drop")
+
+ggplot(Orders_per_plant, aes(x = Cultivar, y = NumTaxa, fill = Treatment_worded)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(position = position_jitterdodge(
+    jitter.width = 0.15,
+    dodge.width = 0.75),
+    size = 2) +
+  labs(x = "Cultivar",
+       y = "Number of arthropod taxa",
+       fill = "Treatment") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  )
+# Save
+# ggsave("Graphs/NumTaxa_Round_2_.png", width = 6, height = 4, dpi = 300)
 
 
 
