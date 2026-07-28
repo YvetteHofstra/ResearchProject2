@@ -293,7 +293,6 @@ ggplot(arth_summary, aes(x = Cultivar,
 # ggsave("Graphs/Arthropods_Round_2_treatment_cultivar.png", width = 8, height = 6, dpi = 300)
 
 
-
 # Now improve how the plots look and wat to show
 summary(Observations_clean$Total_arthropods)
 table(Observations_clean$Total_arthropods)
@@ -418,7 +417,7 @@ ggplot(arth_summary,
 # ggsave("Graphs/Composition_arthropod_taxa_totals_Round_2_.png", width = 14, height = 6, dpi = 300)
 
 
-# Try to make a plot that shows how many orders of arthropods were observed in each treatment and cultivar (later combine some groups, e.g. the bombus and butterfly ones to a "bee" and "butterfly" group, respectively, to make it easier to read the plot)
+# Try to make a plot that shows how many taxa of arthropods were observed in each treatment and cultivar 
 
 Orders_per_plant <- Observations_long %>%
   group_by(Plant_ID,Cultivar, Treatment_worded,Visitor) %>%
@@ -445,6 +444,125 @@ ggplot(Orders_per_plant, aes(x = Cultivar, y = NumTaxa, fill = Treatment_worded)
   )
 # Save
 # ggsave("Graphs/NumTaxa_Round_2_.png", width = 6, height = 4, dpi = 300)
+
+# Combine to some groups, e.g. the bombus and butterfly ones to a "bee" and "butterfly" group, respectively, to make it easier to read the plot
+Observations_long <- Observations_long %>%
+  mutate(
+    Group = case_when(
+      Visitor %in% c("Andrena",
+                     "Apis_mellifera",
+                     "Bombus_lapidarius",
+                     "Bombus_pascuorum",
+                     "Bombus_terrestris") ~ "Bees",
+      
+      Visitor == "Syrphidae" ~ "Hoverflies",
+      
+      Visitor %in% c("Anthomyiidae",
+                     "Bibio_marci",
+                     "Cynomya_mortuorum",
+                     "Empis_tessellata",
+                     "Pollenia",
+                     "Sarcophagidae",
+                     "Tetanocera",
+                     "Thereva_nobilitata") ~ "Non-syrphid flies",
+      
+      Visitor %in% c("Aglais_io",
+                     "Autographa_gamma",
+                     "Celastrina_argiolus",
+                     "Pieris_rapae",
+                     "Polyommatus_icarus",
+                     "Thymelicus_lineola",
+                     "Vanessa_atalanta",
+                     "Zygaena_filipendulae") ~ "Butterflies & moths",
+      
+      Visitor %in% c("Oedemera",
+                     "Pseudovadonia_livida",
+                     "Rhagonycha_fulva") ~ "Beetles",
+      
+      Visitor == "Closterotomus_norwegicus" ~ "True bugs",
+      
+      Visitor == "Stenichneumon_culpator" ~ "Wasps",
+      
+      Visitor == "Larinioides_cornutus" ~ "Spiders",
+      
+      TRUE ~ "Other"
+    )
+  )
+
+arth_groups <- Observations_long %>%
+  group_by(Cultivar, Treatment_worded, Group) %>%
+  summarise(
+    Count = sum(Count),
+    .groups = "drop"
+  )
+
+ggplot(arth_groups,
+       aes(x = Treatment_worded,
+           y = Count,
+           fill = Group)) +
+  geom_col(position = "fill") +
+  facet_wrap(~Cultivar) +
+  labs(
+    x = "Treatment",
+    y = "Relative visitor composition",
+    fill = "Visitor group"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  ) 
+# Save
+# ggsave("Graphs/Taxa_Grouped_Round_2_.png", width = 10, height = 4, dpi = 300)
+# ggsave("Graphs/Taxa_Grouped_Round_2_Name_change.png", width = 10, height = 4, dpi = 300)
+
+ggplot(arth_groups,
+       aes(x = Treatment_worded,
+           y = Count,
+           fill = Group)) +
+  geom_col(position = "fill") +
+  facet_wrap(~Cultivar) +
+  labs(
+    x = "Treatment",
+    y = "Relative visitor composition",
+    fill = "Visitor group"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14, face = "bold")
+  ) +
+  scale_fill_manual(
+    values = c(
+      "Bees" = "#E69F00",
+      "Hoverflies" = "#D55E00",
+      "Non-syrphid flies" = "#56B4E9",
+      "Butterflies & moths" = "#CC79A7",
+      "Beetles" = "#009E73",
+      "True bugs" = "#7A9A01",
+      "Wasps" = "#A6761D",
+      "Spiders" = "#7F7F7F"
+    )
+  )
+# Save
+# ggsave("Graphs/Taxa_Grouped_Round_2_Colours.png", width = 10, height = 4, dpi = 300)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
