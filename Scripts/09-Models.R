@@ -955,40 +955,61 @@ car::Anova(best_model, type = "II")
 ### Total arthropods with number of inflorescences ###
 
 # Here there can be made use of the same blocks so change the left_join to include Block
+Plant_arthropods <- Observations_clean %>%
+  group_by(Plant_ID) %>%
+  summarise(
+    Total_arthropods = sum(Total_arthropods, na.rm = TRUE),
+    .groups = "drop"
+  )
+
 Combined_data2 <- Phenotype %>%
-  left_join(Nectar_cleaned, by = "Plant_ID") %>%
+  left_join(Nectar_cleaned %>% 
+      select(Plant_ID, Microliter), by = "Plant_ID") %>%
   left_join(Plant_arthropods, by = "Plant_ID") %>%
-  left_join(Flowers, by = "Plant_ID") %>%
-  left_join(Flowers_2 %>% select(Plant_ID, Number_Inflorescences, Block), by = "Plant_ID")
+  left_join(Flowers %>% 
+              select(Plant_ID, Number_Inflorescences), by = "Plant_ID") %>%
+  left_join(Flowers_2 %>% 
+      select(Plant_ID, Number_Inflorescences_outside = Number_Inflorescences, Outdoor_Block = Block), by = "Plant_ID")
 
 # Candidate GLMs
-m1 <- glm.nb(Total_arthropods ~ Number_Inflorescences.y,
-             data = Combined_data)
-m2 <- glm.nb(Total_arthropods ~ Number_Inflorescences.y + Cultivar,
-             data = Combined_data)
-m3 <- glm.nb(Total_arthropods ~ Number_Inflorescences.y + Treatment_worded,
-             data = Combined_data)
-m4 <- glm.nb(Total_arthropods ~ Number_Inflorescences.y + Cultivar * Treatment_worded,
-             data = Combined_data)
+m1 <- glm.nb(Total_arthropods ~ Number_Inflorescences_outside,
+             data = Combined_data2)
+m2 <- glm.nb(Total_arthropods ~ Number_Inflorescences_outside + Cultivar,
+             data = Combined_data2)
+m3 <- glm.nb(Total_arthropods ~ Number_Inflorescences_outside + Treatment_worded,
+             data = Combined_data2)
+m4 <- glm.nb(Total_arthropods ~ Number_Inflorescences_outside + Cultivar * Treatment_worded,
+             data = Combined_data2)
 
 # Candidate GLMMs
-m5 <- glmmTMB(Total_arthropods ~ Number_Inflorescences.y + (1|Block),
-              family = nbinom2, data = Combined_data)
-m6 <- glmmTMB(Total_arthropods ~ Number_Inflorescences.y + Cultivar + (1|Block),
-              family = nbinom2, data = Combined_data) 
-m7 <- glmmTMB(Total_arthropods ~ Number_Inflorescences.y + Treatment_worded + (1|Block),
-              family = nbinom2, data = Combined_data) 
-m8 <- glmmTMB(Total_arthropods ~ Number_Inflorescences.y + Cultivar + Treatment_worded + (1|Block),
-              family = nbinom2, data = Combined_data)
+m5 <- glmmTMB(Total_arthropods ~ Number_Inflorescences_outside + (1|Block),
+              family = nbinom2, data = Combined_data2)
+m6 <- glmmTMB(Total_arthropods ~ Number_Inflorescences_outside + Cultivar + (1|Block),
+              family = nbinom2, data = Combined_data2) 
+m7 <- glmmTMB(Total_arthropods ~ Number_Inflorescences_outside + Treatment_worded + (1|Block),
+              family = nbinom2, data = Combined_data2) 
+m8 <- glmmTMB(Total_arthropods ~ Number_Inflorescences_outside + Cultivar + Treatment_worded + (1|Block),
+              family = nbinom2, data = Combined_data2)
 
 # Test the models using AIC
-AIC(m1, m2, m3, m4)
+AIC(m1, m2, m3, m4, m5, m6, m7, m8)
 
 # Best model
-best_model <- m3
+best_model <- m4
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
+
+# Post hoc testing
+emm_treatment <- emmeans(best_model, 
+                         ~ Treatment_worded | Cultivar)
+
+pairs(emm_treatment, adjust = "tukey")
+
+emm_cultivar <- emmeans(best_model,
+                        ~ Cultivar | Treatment_worded)
+
+pairs(emm_cultivar, adjust = "tukey")
 
 
 ### Total arthropods with nectar volume ###
