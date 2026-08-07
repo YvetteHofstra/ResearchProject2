@@ -5,7 +5,6 @@
 #                         Year: 2026
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-
 # ---- Before staring ----
 
 # Clean the environment to avoid conflicts with other projects or names
@@ -98,10 +97,12 @@ Repotting$Root_abundance <- as.factor(Repotting$Root_abundance)
 Observations_clean <- Observations_2 %>%
   filter(Flowering == 1)
 
+# All arthropod taxa observed and given a name to make it easier to work with
 arth_cols <- c(
   "Aglais_io", 	"Andrena", "Anthomyiidae",	"Apis_mellifera", "Autographa_gamma",	"Bibio_marci",	"Bombus_lapidarius", "Bombus_pascuorum", "Bombus_terrestris", "Celastrina_argiolus", "Closterotomus_norwegicus", "Cynomya_mortuorum", "Empis_tessellata", "Larinioides_cornutus", "Oedemera",	"Pieris_rapae", "Pollenia",	"Polyommatus_icarus", "Pseudovadonia_livida",	"Rhagonycha_fulva",	"Sarcophagidae",	"Stenichneumon_culpator",	"Syrphidae",	"Tetanocera", "Thereva_nobilitata",	"Thymelicus_lineola",	"Vanessa_atalanta", "Zygaena_filipendulae"
 )
 
+# Use the new name for all taxa to make all numeric
 Observations_clean <- Observations_clean %>%
   mutate(across(all_of(arth_cols), ~ as.numeric(as.character(.))))
 
@@ -964,12 +965,12 @@ Plant_arthropods <- Observations_clean %>%
 
 Combined_data2 <- Phenotype %>%
   left_join(Nectar_cleaned %>% 
-      select(Plant_ID, Microliter), by = "Plant_ID") %>%
+              select(Plant_ID, Microliter), by = "Plant_ID") %>%
   left_join(Plant_arthropods, by = "Plant_ID") %>%
   left_join(Flowers %>% 
               select(Plant_ID, Number_Inflorescences), by = "Plant_ID") %>%
   left_join(Flowers_2 %>% 
-      select(Plant_ID, Number_Inflorescences_outside = Number_Inflorescences, Outdoor_Block = Block), by = "Plant_ID")
+              select(Plant_ID, Number_Inflorescences_outside = Number_Inflorescences, Outdoor_Block = Block), by = "Plant_ID")
 
 # Candidate GLMs
 m1 <- glm.nb(Total_arthropods ~ Number_Inflorescences_outside,
@@ -1032,37 +1033,5 @@ best_model <- m3
 
 # Test fixed effects
 car::Anova(best_model, type = "II")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
