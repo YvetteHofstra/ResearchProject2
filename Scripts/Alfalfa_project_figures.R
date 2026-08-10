@@ -109,7 +109,7 @@ Nectar_cleaned <- Nectar %>%
   filter(!Plant_ID %in% c("A76", "V64", "V67", "V68", 
                           "V71", "V73", "C89", "C85",
                           "C64", "C68", "C73", "C76", "C62")) %>%
-  dplyr::select(Plant_ID, Microliter)
+  dplyr::select(Plant_ID, Microliter, Treatment_worded, Cultivar)
 
 ## Flower measurements ##
 Flowers_inside <- Flowers %>%
@@ -234,10 +234,27 @@ Orders_per_plant <- Observations_long %>%
 # Final combined dataset for plots
 Combined_data2 <- Phenotype %>%
   dplyr::select(Plant_ID, Cultivar, Treatment_worded) %>%
-  left_join(Nectar_cleaned, by = "Plant_ID") %>%
+  left_join(Nectar_cleaned, by = c("Plant_ID")) %>%
   left_join(Plant_arthropods, by = "Plant_ID") %>%
   left_join(Flowers_inside, by = "Plant_ID") %>%
-  left_join(Flowers_outside, by = "Plant_ID")
+  left_join(Flowers_outside, by = "Plant_ID") %>%
+  mutate(
+    Total_arthropods = replace_na(Total_arthropods, 0)
+  )
+
+Combined_data2 %>%
+  summarise(
+    NA_nectar = sum(is.na(Microliter)),
+    NA_arthropods = sum(is.na(Total_arthropods)),
+    NA_inside = sum(is.na(Number_Inflorescences_inside)),
+    NA_outside = sum(is.na(Number_Inflorescences_outside))
+  )
+
+# For the combined plots, only plants with an actual nectar measurement AND a valid measurement
+Combined_nectar <- Combined_data2 %>%
+  filter(!is.na(Microliter),
+         !is.na(Treatment_worded),
+         Treatment_worded != "")
 
 
 # ---- Soil measurements ----
@@ -730,7 +747,7 @@ ggplot(arth_groups,
 
 ## Nectar volume with inflorescence abundance (April) ##
 
-ggplot(Combined_data2, aes(x = Number_Inflorescences_inside, y = Microliter, colour = Treatment_worded)) +
+ggplot(Combined_nectar, aes(x = Number_Inflorescences_inside, y = Microliter, colour = Treatment_worded)) +
   geom_point(position = position_jitterdodge(jitter.width = 0.15,
                                              dodge.width = 0.75), size = 2) +
   geom_smooth(method = "lm", se = FALSE) +
@@ -768,7 +785,7 @@ ggplot(Combined_data2, aes(x = Number_Inflorescences_outside, y = Total_arthropo
 
 ## Nectar volume with arthropod abundance ##
 
-ggplot(Combined_data2, aes(x = Microliter, y = Total_arthropods, colour = Treatment_worded)) +
+ggplot(Combined_nectar, aes(x = Microliter, y = Total_arthropods, colour = Treatment_worded)) +
   geom_point(size = 2) +
   geom_smooth(method = "glm",
               method.args = list(family = "poisson"),
@@ -784,15 +801,4 @@ ggplot(Combined_data2, aes(x = Microliter, y = Total_arthropods, colour = Treatm
     legend.text = element_text(size = 12),
     legend.title = element_text(size = 14, face = "bold")
   )
-
-
-
-
-
-
-
-
-
-
-
 
